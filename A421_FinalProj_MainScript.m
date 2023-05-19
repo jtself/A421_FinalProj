@@ -474,7 +474,7 @@ v0_b = Cb_ECI * v0;
 
 % Detumble after the detumble phase
 normal.wb_AfterDetumble = [0.001; -0.001; 0.002]; % rad/s; in body->ECI
-normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI;r0_b;v0_b];
+normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI;r0_b;v0_b]; % 16x1 state vector
 
 
 % RUN SIMULATION

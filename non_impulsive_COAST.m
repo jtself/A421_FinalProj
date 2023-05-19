@@ -1,4 +1,4 @@
-function [dstate] = non_impulsive_COAST(time,state,mu)
+function [dstate] = non_impulsive_COAST(state,mu)
 %{ 
 
 *FOR COAST PHASE ONLY*
@@ -44,9 +44,7 @@ xddot = (-mu*rx)/(r^3);
 yddot = (-mu*ry)/(r^3);
 zddot = (-mu*rz)/(r^3);
 
-
 dstate = [xdot; ydot; zdot; xddot; yddot; zddot];
-
 
 end
 

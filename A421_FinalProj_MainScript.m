@@ -160,6 +160,10 @@ normal.state = [normal.wb_given; euler_init; epsilon_b_ECI; eta_b_ECI ];
 
 %{ 
 %%%%%%%%%%%%%%%%%%%% SUPPRESS THIS FOR SPEED %%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
 % RUN SIMULATION
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 out = sim('A421_Final_Proj_TFM_deliv2_justin');
@@ -329,7 +333,15 @@ state(9) = epsilonz
 state(10) = eta
 %}
 
+%}
+
+
+% End supress for speed
+
+
 %% Spacecraft orbit visualization
+
+%{
 
 % Coast one orbit
 tspan = [0 T]; % 100 minute period in seconds
@@ -454,12 +466,18 @@ end % detumble deliverable 3
 
 % for deliv = 4
 
+% Need r,v in body coordinates
+r0 = r_ECI;
+r0_b = Cb_ECI * r0; % now we have r0 in body frame
+v0 = v_ECI;
+v0_b = Cb_ECI * v0;
+
 % Detumble after the detumble phase
 normal.wb_AfterDetumble = [0.001; -0.001; 0.002]; % rad/s; in body->ECI
-normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI];
+normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI;r0_b;v0_b];
+
 
 % RUN SIMULATION
-
 Td_Sim = sim('DisturbanceTorques.slx');
 
 % Extract Simulink data

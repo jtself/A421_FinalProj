@@ -466,16 +466,13 @@ end % detumble deliverable 3
 
 % for deliv = 4
 
-% Need r,v in body coordinates
+% Initialze position/veloc vectors
 r0 = r_ECI;
-r0_b = Cb_ECI * r0; % now we have r0 in body frame
 v0 = v_ECI;
-v0_b = Cb_ECI * v0;
 
 % Detumble after the detumble phase
-normal.wb_AfterDetumble = [0.001; -0.001; 0.002]; % rad/s; in body->ECI
-normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI;r0_b;v0_b]; % 16x1 state vector
-
+normal.wb_AfterDetumble = [0.001; -0.001; 0.002]; % rad/s;
+normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI;r0;v0]; % 16x1 state vector
 
 % RUN SIMULATION
 Td_Sim = sim('DisturbanceTorques.slx');

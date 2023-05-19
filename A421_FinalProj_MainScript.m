@@ -357,92 +357,119 @@ p2.Marker = 'diamond';
 
 end % collapse for deliv. 2
 
-%% Deliverable 3: Date | Title
+%% Deliverable 3: Date May 5: Detumble Simulation
 detumble.k = 0.2; % unitless gain chosen
 detumble.wb_given = [-0.05;0.03;0.2]; % rad/sec
 detumble.state = [detumble.wb_given; euler_init; epsilon_b_ECI; eta_b_ECI; ];
 detumble.deltaT = 6000*5; % 5 orbits at 6000 seconds each orbit
 
+for deliv = 3 % detumble
+
 % RUN SIMULATION
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Run simulation
-detumbleSim = sim('A421_Final_Proj_detumble_deliv3.slx');
+% detumbleSim = sim('A421_Final_Proj_detumble_deliv3.slx');
+% 
+% % Extract Simulink data
+% detumbleSimulation.time = detumbleSim.tout;
+% detumbleSimulation.data = squeeze(detumbleSim.scope_out_3.signals.values);
+% 
+% detumbleSimulation.w = detumbleSimulation.data(1:3,:);
+% detumbleSimulation.w = detumbleSimulation.w';
+% detumbleSimulation.euler = rad2deg(detumbleSimulation.data(4:6,:));
+% detumbleSimulation.euler = detumbleSimulation.euler';
+% detumbleSimulation.quat = detumbleSimulation.data(7:10,:); % epsx epsy epsz eta
+% detumbleSimulation.quat = detumbleSimulation.quat';
+% 
+% % Plotting Simulink Output for Detumble with FULL STATE FEEDBACK
+% 
+% figure
+% subplot(3,1,1)
+% plot(detumbleSimulation.time,detumbleSimulation.w(:,1)) % wx
+% hold on
+% plot(detumbleSimulation.time,detumbleSimulation.w(:,2)) % wy
+% plot(detumbleSimulation.time,detumbleSimulation.w(:,3)) % wz
+% 
+% % Graph pretty 
+% ylim padded 
+% xlim tight 
+% sgtitle("Full-State-Feedback Detumble")
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Angular Velocity, [$\frac{rad}{s}$]','Interpreter','latex'); 
+% plotTitle = title('Angular Velocity as a function of time','interpreter','latex'); 
+% set(plotTitle,'FontSize',14,'FontWeight','bold') 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'EastOutside')
+% 
+% 
+% subplot(3,1,2)
+% plot(detumbleSimulation.time,detumbleSimulation.quat(:,1)) % ex
+% hold on
+% plot(detumbleSimulation.time,detumbleSimulation.quat(:,2)) % ey
+% plot(detumbleSimulation.time,detumbleSimulation.quat(:,3)) % ez
+% plot(detumbleSimulation.time,detumbleSimulation.quat(:,4)) % eta
+% 
+% % Graph pretty 
+% ylim padded 
+% xlim tight 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Quaternions','Interpreter','latex'); 
+% plotTitle = title('Quaternions as a function of time','interpreter','latex'); 
+% set(plotTitle,'FontSize',14,'FontWeight','bold') 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('$\epsilon_x$','$\epsilon_y$','$\epsilon_z$','$\eta$', 'interpreter','latex','Location', 'EastOutside')
+% 
+% subplot(3,1,3)
+% plot(detumbleSimulation.time,detumbleSimulation.euler(:,1)) % phi
+% hold on
+% plot(detumbleSimulation.time,detumbleSimulation.euler(:,2)) % theta
+% plot(detumbleSimulation.time,detumbleSimulation.euler(:,3)) % psi
+% % Graph pretty 
+% ylim padded 
+% xlim tight 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Euler angles, degrees','Interpreter','latex'); 
+% plotTitle = title('Euler angles as a function of time','interpreter','latex'); 
+% set(plotTitle,'FontSize',14,'FontWeight','bold') 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'EastOutside')
 
-% Extract Simulink data
-detumbleSimulation.time = detumbleSim.tout;
-detumbleSimulation.data = squeeze(detumbleSim.scope_out_3.signals.values);
 
-detumbleSimulation.w = detumbleSimulation.data(1:3,:);
-detumbleSimulation.w = detumbleSimulation.w';
-detumbleSimulation.euler = rad2deg(detumbleSimulation.data(4:6,:));
-detumbleSimulation.euler = detumbleSimulation.euler';
-detumbleSimulation.quat = detumbleSimulation.data(7:10,:); % epsx epsy epsz eta
-detumbleSimulation.quat = detumbleSimulation.quat';
+end % detumble deliverable 3
 
-% Plotting Simulink Output for Detumble with FULL STATE FEEDBACK
+%% Deliverable # 4 | Disturbance Torques; May 19 2023
 
-figure
-subplot(3,1,1)
-plot(detumbleSimulation.time,detumbleSimulation.w(:,1)) % wx
-hold on
-plot(detumbleSimulation.time,detumbleSimulation.w(:,2)) % wy
-plot(detumbleSimulation.time,detumbleSimulation.w(:,3)) % wz
-
-% Graph pretty 
-ylim padded 
-xlim tight 
-sgtitle("Full-State-Feedback Detumble")
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Angular Velocity, [$\frac{rad}{s}$]','Interpreter','latex'); 
-plotTitle = title('Angular Velocity as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'EastOutside')
+% for deliv = 4
 
 
-subplot(3,1,2)
-plot(detumbleSimulation.time,detumbleSimulation.quat(:,1)) % ex
-hold on
-plot(detumbleSimulation.time,detumbleSimulation.quat(:,2)) % ey
-plot(detumbleSimulation.time,detumbleSimulation.quat(:,3)) % ez
-plot(detumbleSimulation.time,detumbleSimulation.quat(:,4)) % eta
 
-% Graph pretty 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Quaternions','Interpreter','latex'); 
-plotTitle = title('Quaternions as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\epsilon_x$','$\epsilon_y$','$\epsilon_z$','$\eta$', 'interpreter','latex','Location', 'EastOutside')
 
-subplot(3,1,3)
-plot(detumbleSimulation.time,detumbleSimulation.euler(:,1)) % phi
-hold on
-plot(detumbleSimulation.time,detumbleSimulation.euler(:,2)) % theta
-plot(detumbleSimulation.time,detumbleSimulation.euler(:,3)) % psi
-% Graph pretty 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Euler angles, degrees','Interpreter','latex'); 
-plotTitle = title('Euler angles as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'EastOutside')
+
+
+
+
+
+
+
+
+
+
+
+
+
+% end % deliv 4: disturbance torques
 
 %% Functions used: Deliverable #1
 

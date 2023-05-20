@@ -467,12 +467,11 @@ end % detumble deliverable 3
 % for deliv = 4
 
 % Initialze position/veloc vectors
-r0 = r_ECI;
-v0 = v_ECI;
+rv_initial = [r_ECI;v_ECI]; 
 
 % Detumble after the detumble phase
 normal.wb_AfterDetumble = [0.001; -0.001; 0.002]; % rad/s;
-normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI;r0;v0]; % 16x1 state vector
+normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI]; % 16x1 state vector
 
 % RUN SIMULATION
 Td_Sim = sim('DisturbanceTorques.slx');
@@ -487,8 +486,6 @@ Td_Sim = sim('DisturbanceTorques.slx');
 % Td.euler = Td.euler';
 % Td.quat = Td.data(7:10,:); % epsx epsy epsz eta
 % Td.quat = Td.quat';
-
-
 
 
 

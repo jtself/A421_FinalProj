@@ -478,15 +478,15 @@ normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI;r0
 Td_Sim = sim('DisturbanceTorques.slx');
 
 % Extract Simulink data
-Td.time = Td_Sim.tout;
-Td.data = squeeze(Td_Sim.Td_ScopeOut.signals.values);
-
-Td.w = Td.data(1:3,:);
-Td.w = Td.w';
-Td.euler = rad2deg(Td.data(4:6,:)); % degrees now
-Td.euler = Td.euler';
-Td.quat = Td.data(7:10,:); % epsx epsy epsz eta
-Td.quat = Td.quat';
+% Td.time = Td_Sim.tout;
+% Td.data = squeeze(Td_Sim.Td_ScopeOut.signals.values);
+% 
+% Td.w = Td.data(1:3,:);
+% Td.w = Td.w';
+% Td.euler = rad2deg(Td.data(4:6,:)); % degrees now
+% Td.euler = Td.euler';
+% Td.quat = Td.data(7:10,:); % epsx epsy epsz eta
+% Td.quat = Td.quat';
 
 
 

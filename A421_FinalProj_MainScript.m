@@ -479,6 +479,12 @@ surfaceproperties.cd = 2.5;
 surfaceproperties.a = 16;
 surfaceproperties.rho = 1.647454703531699e-14;
 
+% SRP stuff
+srp.reflectivity = 1.4;             % unitless
+srp.surfacearea = 16;               % m
+srp.se = 1366;                      % W/m2
+
+
 % RUN SIMULATION
 Td_Sim = sim('DisturbanceTorques.slx');
 

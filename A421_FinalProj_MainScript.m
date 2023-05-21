@@ -473,22 +473,15 @@ rv_initial = [r_ECI;v_ECI];
 normal.wb_AfterDetumble = [0.001; -0.001; 0.002]; % rad/s;
 normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI]; % 16x1 state vector
 
+
+% Define Surface Properties for Atmospheric Drag Torque
+surfaceproperties.cd = 2.5;
+surfaceproperties.a = 16;
+surfaceproperties.rho = 1.647454703531699e-14;
+
 % RUN SIMULATION
 Td_Sim = sim('DisturbanceTorques.slx');
 
-% Extract Simulink data
-% Td.time = Td_Sim.tout;
-% Td.data = squeeze(Td_Sim.Td_ScopeOut.signals.values);
-% 
-% Td.w = Td.data(1:3,:);
-% Td.w = Td.w';
-% Td.euler = rad2deg(Td.data(4:6,:)); % degrees now
-% Td.euler = Td.euler';
-% Td.quat = Td.data(7:10,:); % epsx epsy epsz eta
-% Td.quat = Td.quat';
-
-
-breakpoint = 1;
 
 
 

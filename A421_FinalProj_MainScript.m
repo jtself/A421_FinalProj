@@ -27,6 +27,7 @@ The script is organized by section by deliverable in chronological order.
 %}
 
 %% Deliverable 1: April 14, 2023 | Mass Properties
+
 % disp("Deliverable #1: Mass Properties")
 % disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 % 
@@ -460,7 +461,7 @@ for deliv = 3 % detumble
 
 end % detumble deliverable 3
 
-%% Deliverable 2: May 19, 2023 | Disturbance Torques 
+%% Deliverable 4: May 19, 2023 | Disturbance Torques 
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Deliverable #4: Disturbance Torques")
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -489,7 +490,7 @@ srp.se = 1366;                      % W/m2
 % RUN SIMULATION
 Td_Sim = sim('DisturbanceTorques.slx');
 
-% Extract data from sim  
+% Extract data from sim  (torques) 
 atmos_torq.time = Td_Sim.aero_drag_data.time; 
 atmos_torq.data = squeeze(Td_Sim.aero_drag_data.signals.values); 
 
@@ -518,7 +519,7 @@ set([xLab, yLab],'FontName','Palatino Linotype')
 set(gca,'FontSize', 9) 
 set([xLab, yLab],'FontSize', 9) 
 grid on 
-legend('T_ax','T_ay','T_az', 'interpreter','latex','Location', 'best')
+legend('T_ax','T_ay','T_az', 'interpreter','latex','Location', 'northeast')
 
 subplot(2,2,2)
 plot(srp_torq.time, srp_torq.data(1,:)); 
@@ -534,7 +535,7 @@ set([xLab, yLab],'FontName','Palatino Linotype')
 set(gca,'FontSize', 9) 
 set([xLab, yLab],'FontSize', 9) 
 grid on 
-legend('T_sx','T_sy','T_sz', 'interpreter','latex','Location', 'best')
+legend('T_sx','T_sy','T_sz', 'interpreter','latex','Location', 'northeast')
 
 subplot(2,2,3)
 plot(gg_torq.time, gg_torq.data(1,:)); 
@@ -550,7 +551,7 @@ set([xLab, yLab],'FontName','Palatino Linotype')
 set(gca,'FontSize', 9) 
 set([xLab, yLab],'FontSize', 9) 
 grid on 
-legend('T_ggx','T_ggy','T_ggz', 'interpreter','latex','Location', 'best')
+legend('T_ggx','T_ggy','T_ggz', 'interpreter','latex','Location', 'northeast')
 
 subplot(2,2,4)
 plot(mag_torq.time, mag_torq.data(1,:)); 
@@ -567,16 +568,92 @@ set([xLab, yLab],'FontName','Palatino Linotype')
 set(gca,'FontSize', 9) 
 set([xLab, yLab],'FontSize', 9) 
 grid on 
-legend('T_bx','T_by','T_bz', 'interpreter','latex','Location', 'best')
+legend('T_bx','T_by','T_bz', 'interpreter','latex','Location', 'northeast')
 
 sgtitle("Disturbance Torques")
 
 
 
+% % Extract Simulink data for euler/ang/quat 
+Td_Sim.time = Td_Sim.tout;
+Td_Sim.data = squeeze(Td_Sim.scopedata.signals.values);
+
+
+Td_Sim.w = Td_Sim.data(1:3,:);
+Td_Sim.w = Td_Sim.w';
+Td_Sim.euler = rad2deg(Td_Sim.data(4:6,:));
+Td_Sim.euler = Td_Sim.euler';
+Td_Sim.quat = Td_Sim.data(7:10,:); % epsx epsy epsz eta
+Td_Sim.quat = Td_Sim.quat';
+
+
+figure()
+subplot(3,1,1)
+plot(Td_Sim.time,Td_Sim.w(:,1)) % wx
+hold on
+plot(Td_Sim.time,Td_Sim.w(:,2)) % wy
+plot(Td_Sim.time,Td_Sim.w(:,3)) % wz
+
+% Graph pretty 
+ylim padded 
+xlim tight 
+
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Angular Velocity, [$\frac{rad}{s}$]','Interpreter','latex'); 
+plotTitle = title('Angular Velocity as a function of time','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'EastOutside')
+
+
+subplot(3,1,2)
+plot(Td_Sim.time,Td_Sim.quat(:,1)) % ex
+hold on
+plot(Td_Sim.time,Td_Sim.quat(:,2)) % ey
+plot(Td_Sim.time,Td_Sim.quat(:,3)) % ez
+plot(Td_Sim.time,Td_Sim.quat(:,4)) % eta
+
+% Graph pretty 
+ylim padded 
+xlim tight 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Quaternions','Interpreter','latex'); 
+plotTitle = title('Quaternions as a function of time','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('$\epsilon_x$','$\epsilon_y$','$\epsilon_z$','$\eta$', 'interpreter','latex','Location', 'EastOutside')
+
+subplot(3,1,3)
+plot(Td_Sim.time,Td_Sim.euler(:,1)) % phi
+hold on
+plot(Td_Sim.time,Td_Sim.euler(:,2)) % theta
+plot(Td_Sim.time,Td_Sim.euler(:,3)) % psi
+% Graph pretty 
+ylim padded 
+xlim tight 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Euler angles, degrees','Interpreter','latex'); 
+plotTitle = title('Euler angles as a function of time','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'EastOutside')
 
 end % detumble deliverable 4; disturbance torques
 
 %% Functions used
+
 % Deliverable #1
 
     function [detumble_CM,detumble_J] = A421_FinalProj_MassProperties_function(busLength,totalmass)

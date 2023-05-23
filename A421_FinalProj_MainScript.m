@@ -19,7 +19,7 @@ The script is organized by section by deliverable in chronological order.
 1. Mass Properties          -- complete
 2. Torque Free Motion       -- complete
 3. Detumble Simulation      -- complete
-4. Disturbance Simulation   -- not done
+4. Disturbance Simulation   -- ALMOST COMPLETE 5/22
 5. Reaction Wheel Control   -- not done
 6. Reaction Wheel Sizing    -- not done
 7. Visualization            -- not done

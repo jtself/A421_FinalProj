@@ -27,16 +27,16 @@ The script is organized by section by deliverable in chronological order.
 %}
 
 %% Deliverable 1: April 14, 2023 | Mass Properties
-disp("Deliverable #1: Mass Properties")
-disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-
+% disp("Deliverable #1: Mass Properties")
+% disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+% 
 for deliverable = 1
-
-% DETUMBLE PHASE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-disp("PHASE I: Detumble Phase")
-disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+% 
+% % DETUMBLE PHASE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% 
+% 
+% disp("PHASE I: Detumble Phase")
+% disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 %{
 Mass properties, kg
 MASS MATRIX DESCRIPTION: 
@@ -52,23 +52,23 @@ L = 2; % length of bus
 % Call function to find CM and J matrix for DETUMBLE phase
 [detumble.cm,J.detumble] = A421_FinalProj_MassProperties_function(L,totalmass);
 
-% Print results for DETUMBLE phase
-disp("Spacecraft total mass is: " + totalmass + " kg (DETUMBLE PHASE)")
-disp("Center of mass [meters] relative to the bus center is: ")
-disp(detumble.cm)
-disp("Inertia Matrix [kg*m2] of s/c about CM (in DETUMBLE) is: ")
-disp(J.detumble)
+% % Print results for DETUMBLE phase
+% disp("Spacecraft total mass is: " + totalmass + " kg (DETUMBLE PHASE)")
+% disp("Center of mass [meters] relative to the bus center is: ")
+% disp(detumble.cm)
+% disp("Inertia Matrix [kg*m2] of s/c about CM (in DETUMBLE) is: ")
+% disp(J.detumble)
 
 
 % NORMAL OPERATIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-disp("PHASE II: Normal Operations (unfolded) Phase")
-disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-% Spacecraft Center of Mass (NORMAL OPS)
-% Lpanel is in the negative y-direction
-% Rpanel is in the positive y-direction
+% disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+% disp("PHASE II: Normal Operations (unfolded) Phase")
+% disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+% % Spacecraft Center of Mass (NORMAL OPS)
+% % Lpanel is in the negative y-direction
+% % Rpanel is in the positive y-direction
 
 % Call function for location of center of mass UNFOLDED configuration
 % (NORMAL OPS)
@@ -77,20 +77,20 @@ disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 % Call function to find J_Normal_Operations
 [J.normal] = find_J_normalops(mass,L,normal.cm);
 
-% Print results
-disp("Spacecraft mass is: " + totalmass + " kg (NORMAL PHASE)")
-disp("Center of mass [meters] for NORMAL OPERATIONS relative to bus center is: ")
-disp(normal.cm')
-
-disp("Inertia Matrix [kg*m2] of s/c about CM (in NORMAL OPS) is: ")
-disp(J.normal)
+% % Print results
+% disp("Spacecraft mass is: " + totalmass + " kg (NORMAL PHASE)")
+% disp("Center of mass [meters] for NORMAL OPERATIONS relative to bus center is: ")
+% disp(normal.cm')
+% 
+% disp("Inertia Matrix [kg*m2] of s/c about CM (in NORMAL OPS) is: ")
+% disp(J.normal)
 
 end % collapse deliv 1
-%% Deliverable 2: April 21, 2023 | Torque-Free Motion
-disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-disp("Deliverable #2: Torque-Free Motion")
-disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-
+% %% Deliverable 2: April 21, 2023 | Torque-Free Motion
+% disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+% disp("Deliverable #2: Torque-Free Motion")
+% disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+% 
 for deliverable = 2
 
 %{
@@ -365,8 +365,6 @@ p2.Color = 'r';
 p2.Marker = 'diamond';
 %}
 
- % END DELIVERABLE #2
-
 end % collapse for deliv. 2
 
 %% Deliverable 3: Date May 5: Detumble Simulation
@@ -462,9 +460,12 @@ for deliv = 3 % detumble
 
 end % detumble deliverable 3
 
-%% Deliverable # 4 | Disturbance Torques; May 19 2023
+%% Deliverable 2: May 19, 2023 | Disturbance Torques 
+disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+disp("Deliverable #4: Disturbance Torques")
+disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-% for deliv = 4
+for deliverable = 4
 
 % Initialze position/veloc vectors
 rv_initial = [r_ECI;v_ECI]; 
@@ -488,19 +489,92 @@ srp.se = 1366;                      % W/m2
 % RUN SIMULATION
 Td_Sim = sim('DisturbanceTorques.slx');
 
+% Extract data from sim  
+atmos_torq.time = Td_Sim.aero_drag_data.time; 
+atmos_torq.data = squeeze(Td_Sim.aero_drag_data.signals.values); 
+
+srp_torq.time = Td_Sim.SRP_data.time; 
+srp_torq.data = Td_Sim.SRP_data.signals.values; 
+
+gg_torq.time = Td_Sim.gg_data.time; 
+gg_torq.data = squeeze(Td_Sim.gg_data.signals.values); 
+
+mag_torq.time = Td_Sim.mag_data.time; 
+mag_torq.data = squeeze(Td_Sim.mag_data.signals.values); 
+
+% Start torque plots 
+figure() 
+subplot(2,2,1)
+plot(atmos_torq.time, atmos_torq.data(1,:)); 
+hold on 
+plot(atmos_torq.time, atmos_torq.data(2,:)); 
+plot(atmos_torq.time, atmos_torq.data(3,:)); 
+ylim padded 
+xlim tight 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Atmospheric Drag Torque, [$\frac{N}{m}$]','Interpreter','latex');  
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('T_ax','T_ay','T_az', 'interpreter','latex','Location', 'best')
+
+subplot(2,2,2)
+plot(srp_torq.time, srp_torq.data(1,:)); 
+hold on 
+plot(srp_torq.time, srp_torq.data(2,:)); 
+plot(srp_torq.time, srp_torq.data(3,:)); 
+ylim padded 
+xlim tight 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Solar Radiation Pressure Torque, [$\frac{N}{m}$]','Interpreter','latex'); 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('T_sx','T_sy','T_sz', 'interpreter','latex','Location', 'best')
+
+subplot(2,2,3)
+plot(gg_torq.time, gg_torq.data(1,:)); 
+hold on 
+plot(gg_torq.time, gg_torq.data(2,:)); 
+plot(gg_torq.time, gg_torq.data(3,:)); 
+ylim padded 
+xlim tight 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Gravity Gradient Torque, [$\frac{N}{m}$]','Interpreter','latex'); 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('T_ggx','T_ggy','T_ggz', 'interpreter','latex','Location', 'best')
+
+subplot(2,2,4)
+plot(mag_torq.time, mag_torq.data(1,:)); 
+hold on 
+plot(mag_torq.time, mag_torq.data(2,:)); 
+plot(mag_torq.time, mag_torq.data(3,:)); 
+ylim padded 
+xlim tight 
+
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Magnetic Torque, [$\frac{N}{m}$]','Interpreter','latex'); 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('T_bx','T_by','T_bz', 'interpreter','latex','Location', 'best')
+
+sgtitle("Disturbance Torques")
 
 
 
 
-
-
-
-
-
-
-
-
-% end % deliv 4: disturbance torques
+end % detumble deliverable 4; disturbance torques
 
 %% Functions used
 % Deliverable #1

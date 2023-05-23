@@ -480,10 +480,11 @@ surfaceproperties.a = 16;
 surfaceproperties.rho = 1.647454703531699e-14;
 
 % SRP stuff
-srp.reflectivity = 1.4;             % unitless
+srp.reflectivity = 1.4;             % unitless: assuming a # since we dont know the s/c surface properties
 srp.surfacearea = 16;               % m
 srp.se = 1366;                      % W/m2
-
+srp.cop = [0; 0; 0.0263157894736842];
+srp.distance = 1.5e11;              % m - distance from sun to earth
 
 % RUN SIMULATION
 Td_Sim = sim('DisturbanceTorques.slx');

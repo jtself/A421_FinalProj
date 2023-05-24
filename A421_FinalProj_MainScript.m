@@ -609,6 +609,12 @@ set([xLab, yLab],'FontSize', 9)
 grid on 
 legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'EastOutside')
 
+% Turn off plot warnings
+w = warning('query','last');
+% Get the warning ID
+id = w.identifier;
+% Turn off the warning
+warning('off',id)
 
 subplot(3,1,2)
 plot(Td_Sim.time,Td_Sim.quat(:,1)) % ex
@@ -631,6 +637,13 @@ set([xLab, yLab],'FontSize', 9)
 grid on 
 legend('$\epsilon_x$','$\epsilon_y$','$\epsilon_z$','$\eta$', 'interpreter','latex','Location', 'EastOutside')
 
+% Turn off plot warnings
+w = warning('query','last');
+% Get the warning ID
+id = w.identifier;
+% Turn off the warning
+warning('off',id)
+
 subplot(3,1,3)
 plot(Td_Sim.time,Td_Sim.euler(:,1)) % phi
 hold on
@@ -649,6 +662,13 @@ set(gca,'FontSize', 9)
 set([xLab, yLab],'FontSize', 9) 
 grid on 
 legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'EastOutside')
+
+% Turn off plot warnings
+w = warning('query','last');
+% Get the warning ID
+id = w.identifier;
+% Turn off the warning
+warning('off',id)
 
 end % detumble deliverable 4; disturbance torques
 

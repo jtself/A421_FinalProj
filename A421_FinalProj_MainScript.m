@@ -490,7 +490,7 @@ srp.se = 1366;                      % W/m2
 % RUN SIMULATION
 Td_Sim = sim('DisturbanceTorques.slx');
 
-% Extract data from sim  (torques) 
+% Extract data from sim (torques) 
 atmos_torq.time = Td_Sim.aero_drag_data.time; 
 atmos_torq.data = squeeze(Td_Sim.aero_drag_data.signals.values); 
 
@@ -503,7 +503,9 @@ gg_torq.data = squeeze(Td_Sim.gg_data.signals.values);
 mag_torq.time = Td_Sim.mag_data.time; 
 mag_torq.data = squeeze(Td_Sim.mag_data.signals.values); 
 
+
 % Start torque plots 
+for collapseplots = 1
 figure() 
 subplot(2,2,1)
 plot(atmos_torq.time, atmos_torq.data(1,:)); 
@@ -571,13 +573,13 @@ grid on
 legend('T_bx','T_by','T_bz', 'interpreter','latex','Location', 'northeast')
 
 sgtitle("Disturbance Torques")
+end % collapse for plots
 
-
-
-% % Extract Simulink data for euler/ang/quat 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Extract data for omega, eulers, and quaternion FOR BODY-LVLH
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Td_Sim.time = Td_Sim.tout;
 Td_Sim.data = squeeze(Td_Sim.scopedata.signals.values);
-
 
 Td_Sim.w = Td_Sim.data(1:3,:);
 Td_Sim.w = Td_Sim.w';
@@ -587,6 +589,9 @@ Td_Sim.quat = Td_Sim.data(7:10,:); % epsx epsy epsz eta
 Td_Sim.quat = Td_Sim.quat';
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PLOTS FOR BODY-LVLH
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure()
 subplot(3,1,1)
 plot(Td_Sim.time,Td_Sim.w(:,1)) % wx
@@ -600,7 +605,7 @@ xlim tight
 
 xLab = xlabel('Time, s','Interpreter','latex'); 
 yLab = ylabel('Angular Velocity, [$\frac{rad}{s}$]','Interpreter','latex'); 
-plotTitle = title('Angular Velocity as a function of time','interpreter','latex'); 
+plotTitle = title('BODY-LVLH: Angular Velocity as a function of time','interpreter','latex'); 
 set(plotTitle,'FontSize',14,'FontWeight','bold') 
 set(gca,'FontName','Palatino Linotype') 
 set([xLab, yLab],'FontName','Palatino Linotype') 
@@ -628,7 +633,7 @@ ylim padded
 xlim tight 
 xLab = xlabel('Time, s','Interpreter','latex'); 
 yLab = ylabel('Quaternions','Interpreter','latex'); 
-plotTitle = title('Quaternions as a function of time','interpreter','latex'); 
+plotTitle = title('BODY-LVLH: Quaternions as a function of time','interpreter','latex'); 
 set(plotTitle,'FontSize',14,'FontWeight','bold') 
 set(gca,'FontName','Palatino Linotype') 
 set([xLab, yLab],'FontName','Palatino Linotype') 
@@ -654,7 +659,7 @@ ylim padded
 xlim tight 
 xLab = xlabel('Time, s','Interpreter','latex'); 
 yLab = ylabel('Euler angles, degrees','Interpreter','latex'); 
-plotTitle = title('Euler angles as a function of time','interpreter','latex'); 
+plotTitle = title('BODY-LVLH: Euler angles as a function of time','interpreter','latex'); 
 set(plotTitle,'FontSize',14,'FontWeight','bold') 
 set(gca,'FontName','Palatino Linotype') 
 set([xLab, yLab],'FontName','Palatino Linotype') 
@@ -669,6 +674,126 @@ w = warning('query','last');
 id = w.identifier;
 % Turn off the warning
 warning('off',id)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PLOTS FOR BODY-ECI
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Extract data for omega, eulers, and quaternion FOR BODY-ECI
+
+% Td_Sim.time = Td_Sim.tout;
+Td_Sim.data = squeeze(Td_Sim.state_body_ECI.signals.values);
+
+Td_Sim.w = Td_Sim.data(1:3,:);
+Td_Sim.w = Td_Sim.w';
+Td_Sim.euler = rad2deg(Td_Sim.data(4:6,:));
+Td_Sim.euler = Td_Sim.euler';
+Td_Sim.quat = Td_Sim.data(7:10,:); % epsx epsy epsz eta
+Td_Sim.quat = Td_Sim.quat';
+
+figure()
+subplot(3,1,1)
+plot(Td_Sim.time,Td_Sim.w(:,1)) % wx
+hold on
+plot(Td_Sim.time,Td_Sim.w(:,2)) % wy
+plot(Td_Sim.time,Td_Sim.w(:,3)) % wz
+
+% Graph pretty 
+ylim padded 
+xlim tight 
+
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Angular Velocity, [$\frac{rad}{s}$]','Interpreter','latex'); 
+plotTitle = title('BODY-ECI: Angular Velocity as a function of time','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'EastOutside')
+
+% Turn off plot warnings
+w = warning('query','last');
+% Get the warning ID
+id = w.identifier;
+% Turn off the warning
+warning('off',id)
+
+subplot(3,1,2)
+plot(Td_Sim.time,Td_Sim.quat(:,1)) % ex
+hold on
+plot(Td_Sim.time,Td_Sim.quat(:,2)) % ey
+plot(Td_Sim.time,Td_Sim.quat(:,3)) % ez
+plot(Td_Sim.time,Td_Sim.quat(:,4)) % eta
+
+% Graph pretty 
+ylim padded 
+xlim tight 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Quaternions','Interpreter','latex'); 
+plotTitle = title('BODY-ECI: Quaternions as a function of time','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('$\epsilon_x$','$\epsilon_y$','$\epsilon_z$','$\eta$', 'interpreter','latex','Location', 'EastOutside')
+
+% Turn off plot warnings
+w = warning('query','last');
+% Get the warning ID
+id = w.identifier;
+% Turn off the warning
+warning('off',id)
+
+subplot(3,1,3)
+plot(Td_Sim.time,Td_Sim.euler(:,1)) % phi
+hold on
+plot(Td_Sim.time,Td_Sim.euler(:,2)) % theta
+plot(Td_Sim.time,Td_Sim.euler(:,3)) % psi
+% Graph pretty 
+ylim padded 
+xlim tight 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Euler angles, degrees','Interpreter','latex'); 
+plotTitle = title('BODY-ECI: Euler angles as a function of time','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'EastOutside')
+
+% Turn off plot warnings
+w = warning('query','last');
+% Get the warning ID
+id = w.identifier;
+% Turn off the warning
+warning('off',id)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 end % detumble deliverable 4; disturbance torques
 

@@ -19,7 +19,7 @@ The script is organized by section by deliverable in chronological order.
 1. Mass Properties          -- complete
 2. Torque Free Motion       -- complete
 3. Detumble Simulation      -- complete
-4. Disturbance Simulation   -- ALMOST COMPLETE 5/22
+4. Disturbance Simulation   -- complete 5/25
 5. Reaction Wheel Control   -- not done
 6. Reaction Wheel Sizing    -- not done
 7. Visualization            -- not done
@@ -774,28 +774,7 @@ id = w.identifier;
 % Turn off the warning
 warning('off',id)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-end % detumble deliverable 4; disturbance torques
+end % deliverable 4; disturbance torques
 
 %% Functions used
 

@@ -19,9 +19,9 @@ The script is organized by section by deliverable in chronological order.
 1. Mass Properties          -- complete
 2. Torque Free Motion       -- complete
 3. Detumble Simulation      -- complete
-4. Disturbance Simulation   -- complete 5/25
-5. Reaction Wheel Control   -- not done
-6. Reaction Wheel Sizing    -- not done
+4. Disturbance Simulation   -- complete
+5. Reaction Wheel Control   -- DUE JUNE 2
+6. Reaction Wheel Sizing    -- DUE JUNE 2
 7. Visualization            -- not done
 8. Final Reflection         -- not done
 %}
@@ -465,7 +465,7 @@ end % detumble deliverable 3
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Deliverable #4: Disturbance Torques")
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-
+%{
 for deliverable = 4
 
 % Initialze position/veloc vectors
@@ -776,6 +776,67 @@ warning('off',id)
 
 end % deliverable 4; disturbance torques
 
+
+
+
+%}
+%% Deliverable 5: Reaction Wheel Control (Due Friday, June 2, 2023)
+disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+disp("Deliverable #5: Reaction Wheel Control")
+disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+
+% for deliv = 5 % start collapse loop
+
+
+% Find control gains for FSFC for a 3-axis reaction wheel control system.
+
+% Givens
+
+% damping ratio
+zeta = 0.65;
+% settling time, s
+ts = 30;
+ts_required = 0.02; % 2 percent settling time
+
+% wheel mass, kg
+mw = 1; 
+
+% wheel inertia, kg/m2
+Is = 1.2; 
+It = 0.6; 
+
+% Find control gains, k
+
+% Using above values, can find omega_n
+wn = (log(ts_required * sqrt(1 - zeta^2))) / (-zeta*ts);
+
+% Knowing wn, can find kd and kp
+kd = 2 * zeta * wn .* J.normal;
+kp = wn^2 * 2 .* J.normal;
+
+disp("Gain matrices are (with units of kg*m2): ")
+kd
+kp
+
+
+
+%{
+DELIVERABLES: 
+1. Euler angles and quaternions in body/ECI
+2. Euler angles and quternions in body/LVLH
+3. Angular velocity of s/c in ECI expressed in Body
+4. Angular velocity of s/c in LVLH expressed in Body
+5. Commanded moment from the control law
+6. Wheel speed of each wheel
+%}
+
+
+
+
+
+
+% end % deliv 5
 %% Functions used
 
 % Deliverable #1
@@ -1386,10 +1447,4 @@ end % deliverable 4; disturbance torques
     end 
     end % end earth sphere plot code.
     
-    % Functions used: Deliverable #3
-    
-    % Functions used: Deliverable #4
-    
-    % Functions used: Deliverable #5
-    
-    % Functions used: Deliverable #6
+ 

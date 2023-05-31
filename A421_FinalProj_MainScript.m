@@ -818,7 +818,11 @@ disp("Gain matrices are (with units of kg*m2): ")
 kd
 kp
 
+% Nonlinear case quaternion commanded input into Simulink
+qc = [0;0;0;1]; 
 
+% Run simulation
+RW_Sim = sim('ReactionWheelControl.slx');
 
 %{
 DELIVERABLES: 

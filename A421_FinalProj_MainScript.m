@@ -465,7 +465,7 @@ end % detumble deliverable 3
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Deliverable #4: Disturbance Torques")
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-%{
+
 for deliverable = 4
 
 % Initialze position/veloc vectors
@@ -486,7 +486,7 @@ srp.reflectivity = 1.4;             % unitless
 srp.surfacearea = 16;               % m
 srp.se = 1366;                      % W/m2
 
-
+%{
 % RUN SIMULATION
 Td_Sim = sim('DisturbanceTorques.slx');
 
@@ -773,13 +773,12 @@ w = warning('query','last');
 id = w.identifier;
 % Turn off the warning
 warning('off',id)
+%}
+
+
 
 end % deliverable 4; disturbance torques
 
-
-
-
-%}
 %% Deliverable 5: Reaction Wheel Control (Due Friday, June 2, 2023)
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Deliverable #5: Reaction Wheel Control")

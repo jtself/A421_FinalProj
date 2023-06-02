@@ -822,7 +822,7 @@ kp
 qc = [0;0;0;1]; 
 
 % New inertia matrix with reaction wheels taken into account
-Is_matrix = [Is 0 0; 0 It 0; 0 0 It];
+Is_matrix = [Is 0 0; 0 Is 0; 0 0 Is];
 
 I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
 

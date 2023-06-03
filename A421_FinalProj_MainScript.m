@@ -791,7 +791,6 @@ disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 % Find control gains for FSFC for a 3-axis reaction wheel control system.
 
 % Givens
-
 % damping ratio
 zeta = 0.65;
 % settling time, s
@@ -827,7 +826,7 @@ Is_matrix = [Is 0 0; 0 Is 0; 0 0 Is];
 I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
 
 % Run simulation
-RW_Sim = sim('ReactionWheelControl.slx');
+%RW_Sim = sim('ReactionWheelControl.slx');
 
 %{
 DELIVERABLES: 

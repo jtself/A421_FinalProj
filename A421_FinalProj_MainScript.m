@@ -188,41 +188,45 @@ normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI]; 
 % Adding more stuff from Mehiel's Code for ease. I am sure a lot of this is
 % redundant but we can clean up later after I get this stuff working. 
 
-% h = 53335.2;
-% ecc = 0; 
-% Omega = 0;
-% inclination = 98.43*pi/180; 
-% omega = 0;
-% nu = 0; 
-% 
-% [r_ECI_0, v_ECI_0] = coe2rv(h, ecc, Omega, inclination, omega, nu);
-% 
-% z_LVLH = -r_ECI_0/norm(r_ECI_0);
-% y_LVLH = -cross(r_ECI_0, v_ECI_0)/norm(cross(r_ECI_0, v_ECI_0));
-% x_LVLH = cross(y_LVLH, z_LVLH);
-% 
-% % Euler angles from body to LVLH
-% phi_0 = 0;
-% theta_0 = 0;
-% psi_0 = 0;
-% E_b_LVLH_0 = [phi_0; theta_0; psi_0];
-% 
-% % Calculate Initial Kinematics
-% C_LVLH_ECI_0 = [x_LVLH'; y_LVLH'; z_LVLH'];
-% C_b_LVLH_0 = Cx(phi_0)*Cy(theta_0)*Cz(psi_0);
-% 
-% 
-% C_b_ECI_0 = C_b_LVLH_0*C_LVLH_ECI_0;
-% q_LVLH_ECI_0 = C2quat(C_LVLH_ECI_0);
-% q_b_LVLH_0 = [0; 0; 0; 1];
-% %q_b_ECI_0 = C2quat(C_b_ECI_0);
-% q_b_ECI_0 = quatMult(q_b_LVLH_0, q_LVLH_ECI_0);
-% % Euler angles from body to ECI
-% E_b_ECI_0 = C2EulerAngles(C_b_ECI_0);
-% % Initial body rates of spacecraft
-% w_LVLH_ECI_0 = C_b_ECI_0*cross(r_ECI_0, v_ECI_0)/norm(r_ECI_0)^2;
-% w_b_ECI_0 = [0.001; -0.001; 0.002];
-% w_b_LVLH_0 = w_b_ECI_0 - w_LVLH_ECI_0;
+h = 53335.2;
+ecc = 0; 
+Omega = 0;
+inclination = 98.43*pi/180; 
+omega = 0;
+nu = 0; 
+
+[r_ECI_0, v_ECI_0] = coe2rv(h, ecc, Omega, inclination, omega, nu);
+
+z_LVLH = -r_ECI_0/norm(r_ECI_0);
+y_LVLH = -cross(r_ECI_0, v_ECI_0)/norm(cross(r_ECI_0, v_ECI_0));
+x_LVLH = cross(y_LVLH, z_LVLH);
+
+% Euler angles from body to LVLH
+phi_0 = 0;
+theta_0 = 0;
+psi_0 = 0;
+E_b_LVLH_0 = [phi_0; theta_0; psi_0];
+
+% Calculate Initial Kinematics
+C_LVLH_ECI_0 = [x_LVLH'; y_LVLH'; z_LVLH'];
+%C_b_LVLH_0 = Cx(phi_0)*Cy(theta_0)*Cz(psi_0);
+Cx = axang2rotm([1 0 0 phi_0]);
+Cy = axang2rotm([0 1 0 theta_0]);
+Cz = axang2rotm([0 0 1 psi_0]);
+C_b_LVLH_0 = Cx*Cy*Cz; 
+
+q_LVLH_ECI_0 = C2quat(C_LVLH_ECI_0);
+C_b_ECI_0 = C_b_LVLH_0*C_LVLH_ECI_0;
+q_b_LVLH_0 = [0; 0; 0; 1]; 
+%q_b_ECI_0 = C2quat(C_b_ECI_0);
+q_b_ECI_0 = quatMult(q_b_LVLH_0, q_LVLH_ECI_0);
+% Euler angles from body to ECI
+E_b_ECI_0 = C2EulerAngles(C_b_ECI_0); 
+
+% Initial body rates of spacecraft
+w_LVLH_ECI_0 = C_b_ECI_0*cross(r_ECI_0, v_ECI_0)/norm(r_ECI_0)^2; 
+w_b_ECI_0 = [0.001; -0.001; 0.002];
+%w_b_LVLH_0 = w_b_ECI_0 - w_LVLH_ECI_0; % also dont think need rn
 
 
 % actual part four starts 

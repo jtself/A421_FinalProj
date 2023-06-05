@@ -22,7 +22,7 @@ eta_q = q(1);
 epsilon = eta_p * eps_q + eta_q * eps_p + cross(eps_p,eps_q);
 eta = (eta_p*eta_q) - eps_p'*eps_q;
 
-quat = [eta;epsilon];
+quat = [eta, epsilon];
 
 
 end

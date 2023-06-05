@@ -988,3 +988,49 @@ eta = (eta_p*eta_q) - eps_p'*eps_q;
 quat = [eta;epsilon];
 
 end
+
+function matrix2quat = C2quat(C)
+
+% Extract the elements of the DCM for C2quat -- will turn into a function.
+% i m just impatient ok 
+C11 = C(1, 1);
+C12 = C(1, 2);
+C13 = C(1, 3);
+C21 = C(2, 1);
+C22 = C(2, 2);
+C23 = C(2, 3);
+C31 = C(3, 1);
+C32 = C(3, 2);
+C33 = C(3, 3);
+
+% Calculate the quaternion elements; eta last !! 
+qw = sqrt(1 + C11 + C22 + C33) / 2;
+qx = (C32 - C23) / (4 * qw);
+qy = (C13 - C31) / (4 * qw);
+qz = (C21 - C12) / (4 * qw);
+
+matrix2quat = [qx; qy; qz; qw];
+
+end 
+
+
+function euler_angles = C2EulerAngles(C)
+    % Extract the elements of the direction cosine matrix
+    C11 = C(1, 1);
+    C12 = C(1, 2);
+    C13 = C(1, 3);
+    C21 = C(2, 1);
+    C22 = C(2, 2);
+    C23 = C(2, 3);
+    C31 = C(3, 1);
+    C32 = C(3, 2);
+    C33 = C(3, 3);
+
+    % Calculate the Euler angles
+    phi = atan2(C32, C33);
+    theta = -asin(C31);
+    psi = atan2(C21, C11);
+
+    euler_angles = [phi; theta; psi];
+end
+

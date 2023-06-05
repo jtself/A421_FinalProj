@@ -936,7 +936,7 @@ I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
     omega = Omega; 
     inc = inclination; 
     raan = nu;
-    mu = 1.327124e11; %km3/s2
+    mu = 1.327124e11; %km3/s2 for da sun !! this code is messed
 
 
     theta = theta*pi/180;

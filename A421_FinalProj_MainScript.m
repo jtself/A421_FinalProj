@@ -971,25 +971,6 @@ quat_conj = [eta, eps_vect];
 end 
 
 
-function quat = quatMult(p,q)
-
-% Extract eta, epsilon from input vectors
-
-eps_p = p(2:4);
-eta_p = p(1);
-
-
-eps_q = q(2:4);
-eta_q = q(1);
-
- 
-epsilon = eta_p * eps_q + eta_q * eps_p + cross(eps_p,eps_q);
-eta = (eta_p*eta_q) - eps_p'*eps_q;
-
-quat = [eta;epsilon];
-
-end
-
 function matrix2quat = C2quat(C)
 
 % Extract the elements of the DCM for C2quat -- will turn into a function.

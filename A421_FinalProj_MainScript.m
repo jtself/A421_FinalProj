@@ -186,44 +186,44 @@ normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI]; 
 % Adding more stuff from Mehiel's Code for ease. I am sure a lot of this is
 % redundant but we can clean up later after I get this stuff working. 
 
-h = 53335.2;
-ecc = 0; 
-Omega = 0;
-inclination = 98.43*pi/180; 
-omega = 0;
-nu = 0; 
+% h = 53335.2;
+% ecc = 0; 
+% Omega = 0;
+% inclination = 98.43*pi/180; 
+% omega = 0;
+% nu = 0; 
 
-[r_ECI_0, v_ECI_0] = coe2rv(h, ecc, Omega, inclination, omega, nu);
+%[r_ECI_0, v_ECI_0] = coe2rv(h, ecc, Omega, inclination, omega, nu);
 
-z_LVLH = -r_ECI_0/norm(r_ECI_0);
-y_LVLH = -cross(r_ECI_0, v_ECI_0)/norm(cross(r_ECI_0, v_ECI_0));
-x_LVLH = cross(y_LVLH, z_LVLH);
+%z_LVLH = -r_ECI_0/norm(r_ECI_0);
+%y_LVLH = -cross(r_ECI_0, v_ECI_0)/norm(cross(r_ECI_0, v_ECI_0));
+%x_LVLH = cross(y_LVLH, z_LVLH);
 
 % Euler angles from body to LVLH
-phi_0 = 0;
-theta_0 = 0;
-psi_0 = 0;
-E_b_LVLH_0 = [phi_0; theta_0; psi_0];
+% phi_0 = 0;
+% theta_0 = 0;
+% psi_0 = 0;
+% E_b_LVLH_0 = [phi_0; theta_0; psi_0];
 
 % Calculate Initial Kinematics
-C_LVLH_ECI_0 = [x_LVLH'; y_LVLH'; z_LVLH'];
-%C_b_LVLH_0 = Cx(phi_0)*Cy(theta_0)*Cz(psi_0);
-Cx = axang2rotm([1 0 0 phi_0]);
-Cy = axang2rotm([0 1 0 theta_0]);
-Cz = axang2rotm([0 0 1 psi_0]);
-C_b_LVLH_0 = Cx*Cy*Cz; 
-
-q_LVLH_ECI_0 = C2quat(C_LVLH_ECI_0);
-C_b_ECI_0 = C_b_LVLH_0*C_LVLH_ECI_0;
-q_b_LVLH_0 = [0; 0; 0; 1]; 
-%q_b_ECI_0 = C2quat(C_b_ECI_0);
-q_b_ECI_0 = quatMult(q_b_LVLH_0, q_LVLH_ECI_0);
-% Euler angles from body to ECI
-E_b_ECI_0 = C2EulerAngles(C_b_ECI_0); 
-
-% Initial body rates of spacecraft
-w_LVLH_ECI_0 = C_b_ECI_0*cross(r_ECI_0, v_ECI_0)/norm(r_ECI_0)^2; 
-w_b_ECI_0 = [0.001; -0.001; 0.002];
+% C_LVLH_ECI_0 = [x_LVLH'; y_LVLH'; z_LVLH'];
+% %C_b_LVLH_0 = Cx(phi_0)*Cy(theta_0)*Cz(psi_0);
+% Cx = axang2rotm([1 0 0 phi_0]);
+% Cy = axang2rotm([0 1 0 theta_0]);
+% Cz = axang2rotm([0 0 1 psi_0]);
+% C_b_LVLH_0 = Cx*Cy*Cz; 
+% 
+% q_LVLH_ECI_0 = C2quat(C_LVLH_ECI_0);
+% C_b_ECI_0 = C_b_LVLH_0*C_LVLH_ECI_0;
+% q_b_LVLH_0 = [0; 0; 0; 1]; 
+% %q_b_ECI_0 = C2quat(C_b_ECI_0);
+% q_b_ECI_0 = quatMult(q_b_LVLH_0, q_LVLH_ECI_0);
+% % Euler angles from body to ECI
+% E_b_ECI_0 = C2EulerAngles(C_b_ECI_0); 
+% 
+% % Initial body rates of spacecraft
+% w_LVLH_ECI_0 = C_b_ECI_0*cross(r_ECI_0, v_ECI_0)/norm(r_ECI_0)^2; 
+% w_b_ECI_0 = [0.001; -0.001; 0.002];
 %w_b_LVLH_0 = w_b_ECI_0 - w_LVLH_ECI_0; % also dont think need rn
 
 
@@ -258,9 +258,6 @@ surfaceProperties = [Areas cps normals];
 load aerowmm2020
 
 dyear_0 = decyear(2019, 3, 20, 12, 0, 0);
-
-
-
 
 
 end % deliverable 4; disturbance torques
@@ -572,57 +569,6 @@ I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
     
     end % quat to rot mat function
     
-    function [dstate] = non_impulsive_COAST(time,state,mu)
-    %{ 
-    
-    *FOR COAST PHASE ONLY*
-    
-    **This function assumes that thrust is exactly parallel to initial velocity
-    direction.
-    
-    This function is for numerical integration (i.e., plug into ode45).
-    NOTE: only use this function for the BURN PHASE of the non-impulsive
-    maneuver. For the BURN phase, use "non_impulsive_BURN"
-    
-    INPUTS: 
-        INITIAL CONDITIONS
-        state vector(1:3) = position (rx,ry,rz)
-        state vector(4:6) = velocity (vx,vy,vz)
-    
-    OUTPUT: New state vector after integration.
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    Justin Self, Cal Poly, Fall 2022; Introduction to Orbital Mechanics.
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %}
-    
-    g0 = 9.807; % m/s2
-    g0 = g0/1000; % to correct the units; km/s2
-    
-    rx = state(1);
-    ry = state(2);
-    rz = state(3);
-    vx = state(4);
-    vy = state(5);
-    vz = state(6);
-    
-    r_vect = [rx ry rz];
-    r = norm(r_vect);
-    
-    v_vect = [vx vy vz];
-    v = norm(v_vect);
-    
-    xdot = vx;
-    ydot = vy;
-    zdot = vz;
-    xddot = (-mu*rx)/(r^3);
-    yddot = (-mu*ry)/(r^3);
-    zddot = (-mu*rz)/(r^3);
-    
-    
-    dstate = [xdot; ydot; zdot; xddot; yddot; zddot];
-    
-    
-    end % non impulsive coast funct
     
     function euler_init = eulerinitial_from_LVLH_ECI_frames(Cb_LVLH,C_LVLH_ECI)
     %{
@@ -974,76 +920,4 @@ I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
 
 % Deliverable 5 
 
-function quat_conj = quatConj(q) 
-% eta first 
-eta = q(1); 
-eps = q(2:end); 
-eps_vect = -eps; 
-quat_conj = [eta, eps_vect]; 
-end 
-
-
-function quat = quatMult(p,q)
-
-% Extract eta, epsilon from input vectors
-
-eps_p = p(2:4);
-eta_p = p(1);
-
-
-eps_q = q(2:4);
-eta_q = q(1);
-
- 
-epsilon = eta_p * eps_q + eta_q * eps_p + cross(eps_p,eps_q);
-eta = (eta_p*eta_q) - eps_p'*eps_q;
-
-quat = [eta;epsilon];
-
-end
-
-function matrix2quat = C2quat(C)
-
-% Extract the elements of the DCM for C2quat -- will turn into a function.
-% i m just impatient ok 
-C11 = C(1, 1);
-C12 = C(1, 2);
-C13 = C(1, 3);
-C21 = C(2, 1);
-C22 = C(2, 2);
-C23 = C(2, 3);
-C31 = C(3, 1);
-C32 = C(3, 2);
-C33 = C(3, 3);
-
-% Calculate the quaternion elements; eta last !! 
-qw = sqrt(1 + C11 + C22 + C33) / 2;
-qx = (C32 - C23) / (4 * qw);
-qy = (C13 - C31) / (4 * qw);
-qz = (C21 - C12) / (4 * qw);
-
-matrix2quat = [qx; qy; qz; qw];
-
-end 
-
-
-function euler_angles = C2EulerAngles(C)
-    % Extract the elements of the direction cosine matrix
-    C11 = C(1, 1);
-    C12 = C(1, 2);
-    C13 = C(1, 3);
-    C21 = C(2, 1);
-    C22 = C(2, 2);
-    C23 = C(2, 3);
-    C31 = C(3, 1);
-    C32 = C(3, 2);
-    C33 = C(3, 3);
-
-    % Calculate the Euler angles
-    phi = atan2(C32, C33);
-    theta = -asin(C31);
-    psi = atan2(C21, C11);
-
-    euler_angles = [phi; theta; psi];
-end
 

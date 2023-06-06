@@ -196,7 +196,7 @@ omega = 0;
 nu = 0; 
 
 % [r_ECI_0, v_ECI_0] = coe2rv(h, ecc, Omega, inclination, omega, nu);
-[r_ECI_0,v_ECI_0] = r_and_v_from_COEs(Omega,inclination,omega,h,ecc,nu)
+[r_ECI_0,v_ECI_0] = r_and_v_from_COEs(Omega,inclination,omega,h,ecc,nu);
 
 z_LVLH = -r_ECI_0/norm(r_ECI_0);
 y_LVLH = -cross(r_ECI_0, v_ECI_0)/norm(cross(r_ECI_0, v_ECI_0));

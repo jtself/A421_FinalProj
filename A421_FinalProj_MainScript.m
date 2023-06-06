@@ -156,215 +156,7 @@ normal.wb_given = [0.001; -0.001; 0.002]; % rad/s
 % For NORMAL OPS
 normal.state = [normal.wb_given; euler_init; epsilon_b_ECI; eta_b_ECI ];
 
-% The above goes into Simulink as the initial conditions for the graphical
-% ODE
 
-%{ 
-%%%%%%%%%%%%%%%%%%%% SUPPRESS THIS FOR SPEED %%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-% RUN SIMULATION
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-out = sim('A421_Final_Proj_TFM_deliv2_justin');
-
-% Extract Simulink data
-simulation.time = out.tout;
-simulation.data = squeeze(out.ODEsimdata.signals.values);
-
-simulation.w = simulation.data(1:3,:);
-simulation.w = simulation.w';
-simulation.euler = rad2deg(simulation.data(4:6,:));
-simulation.euler = simulation.euler';
-simulation.quat = simulation.data(7:10,:); % epsx epsy epsz, eta
-simulation.quat = simulation.quat';
-
-% Plotting Simulink Output
-for collapse = 1
-figure
-subplot(3,1,1)
-plot(simulation.time,simulation.w(:,1)) % wx
-hold on
-plot(simulation.time,simulation.w(:,2)) % wy
-plot(simulation.time,simulation.w(:,3)) % wz
-
-% Graph pretty 
-ylim padded 
-xlim tight 
-sgtitle("Simulink Output")
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Angular Velocity, [$\frac{rad}{s}$]','Interpreter','latex'); 
-plotTitle = title('Angular Velocity as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'EastOutside')
-
-
-subplot(3,1,2)
-plot(simulation.time,simulation.quat(:,1)) % ex
-hold on
-plot(simulation.time,simulation.quat(:,2)) % ey
-plot(simulation.time,simulation.quat(:,3)) % ez
-plot(simulation.time,simulation.quat(:,4)) % eta
-% Graph pretty 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Quaternions','Interpreter','latex'); 
-plotTitle = title('Quaternions as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\epsilon_x$','$\epsilon_y$','$\epsilon_z$','$\eta$', 'interpreter','latex','Location', 'EastOutside')
-
-subplot(3,1,3)
-plot(simulation.time,simulation.euler(:,1)) % phi
-hold on
-plot(simulation.time,simulation.euler(:,2)) % theta
-plot(simulation.time,simulation.euler(:,3)) % psi
-% Graph pretty 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Euler angles, degrees','Interpreter','latex'); 
-plotTitle = title('Euler angles as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'EastOutside')
-
-end
-
-%% ODE45 test
-
-tspan = [0 6000]; % 100 minute period in seconds
-options = odeset('RelTol', 1e-8, 'AbsTol',1e-8);
-torque = 0;
-
-% call ode here
-[test.time,test.state] = ode45(@angularvelocity_ODE,tspan,normal.state,options,J.normal,torque);
-
-% Plot MATLAB version
-for collapse = 1
-figure
-subplot(3,1,1)
-plot(test.time,test.state(:,1)) % wx
-hold on
-plot(test.time,test.state(:,2)) % wy
-plot(test.time,test.state(:,3)) % wz
-
-% Graph pretty 
-ylim padded 
-xlim tight 
-sgtitle("MATLAB Output")
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Angular Velocity, [$\frac{rad}{s}$]','Interpreter','latex'); 
-plotTitle = title('Angular Velocity as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'EastOutside')
-
-subplot(3,1,2)
-plot(test.time,test.state(:,7)) % eta
-hold on
-plot(test.time,test.state(:,8)) % ex
-plot(test.time,test.state(:,9)) % ex
-plot(test.time,test.state(:,10)) % ex
-% Graph pretty 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Quaternions','Interpreter','latex'); 
-plotTitle = title('Quaternions as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\epsilon_x$','$\epsilon_y$','$\epsilon_z$','$\eta$', 'interpreter','latex','Location', 'EastOutside')
-
-subplot(3,1,3)
-plot(test.time,test.state(:,4)) % phi
-hold on
-plot(test.time,test.state(:,5)) % theta
-plot(test.time,test.state(:,6)) % psi
-% Graph pretty 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Euler angles, degrees','Interpreter','latex'); 
-plotTitle = title('Euler angles as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'EastOutside')
-
-end
-
-%{
-Nomenclature for state vector: 
-state(1) = wx
-state(2) = wy
-state(3) = wz
-state(4) = phi
-state(5) = theta
-state(6) = psi
-state(7) = epsilonx
-state(8) = epsilony
-state(9) = epsilonz
-state(10) = eta
-%}
-
-%}
-
-
-% End supress for speed
-
-
-%% Spacecraft orbit visualization
-
-%{
-
-% Coast one orbit
-tspan = [0 T]; % 100 minute period in seconds
-options = odeset('RelTol', 1e-8, 'AbsTol',1e-8);
-statenew = [r_ECI, v_ECI]; % r and v in ECI
-
-
-% call ode here
-[orbit.time, orbit.state] = ode45(@non_impulsive_COAST,tspan,statenew,options,mu);
-figure
-h1 = gca;
-earth_sphere(h1)
-hold on
-
-% Plot orbit
-p1 = plot3(orbit.state(:,1),orbit.state(:,2),orbit.state(:,3),'LineWidth',2); % orbit
-p2 = plot3(orbit.state(end,1),orbit.state(end,2),orbit.state(end,3),'LineWidth',3); % current position
-% Plot options
-p1.Color = 'k';
-p2.Color = 'r';
-p2.Marker = 'diamond';
-%}
 
 end % collapse for deliv. 2
 
@@ -375,88 +167,6 @@ detumble.state = [detumble.wb_given; euler_init; epsilon_b_ECI; eta_b_ECI; ];
 tspan = T * 5; % five orbits; seconds
 
 for deliv = 3 % detumble
-
-% RUN SIMULATION
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Run simulation
-
-% detumbleSim = sim('A421_Final_Proj_detumble_deliv3.slx');
-% 
-% % Extract Simulink data
-% detumbleSimulation.time = detumbleSim.tout;
-% detumbleSimulation.data = squeeze(detumbleSim.scope_out_3.signals.values);
-% 
-% detumbleSimulation.w = detumbleSimulation.data(1:3,:);
-% detumbleSimulation.w = detumbleSimulation.w';
-% detumbleSimulation.euler = rad2deg(detumbleSimulation.data(4:6,:));
-% detumbleSimulation.euler = detumbleSimulation.euler';
-% detumbleSimulation.quat = detumbleSimulation.data(7:10,:); % epsx epsy epsz eta
-% detumbleSimulation.quat = detumbleSimulation.quat';
-% 
-% % Plotting Simulink Output for Detumble with FULL STATE FEEDBACK
-% 
-% figure
-% subplot(3,1,1)
-% plot(detumbleSimulation.time,detumbleSimulation.w(:,1)) % wx
-% hold on
-% plot(detumbleSimulation.time,detumbleSimulation.w(:,2)) % wy
-% plot(detumbleSimulation.time,detumbleSimulation.w(:,3)) % wz
-% 
-% % Graph pretty 
-% ylim padded 
-% xlim tight 
-% sgtitle("Full-State-Feedback Detumble")
-% xLab = xlabel('Time, s','Interpreter','latex'); 
-% yLab = ylabel('Angular Velocity, [$\frac{rad}{s}$]','Interpreter','latex'); 
-% plotTitle = title('Angular Velocity as a function of time','interpreter','latex'); 
-% set(plotTitle,'FontSize',14,'FontWeight','bold') 
-% set(gca,'FontName','Palatino Linotype') 
-% set([xLab, yLab],'FontName','Palatino Linotype') 
-% set(gca,'FontSize', 9) 
-% set([xLab, yLab],'FontSize', 9) 
-% grid on 
-% legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'EastOutside')
-% 
-% 
-% subplot(3,1,2)
-% plot(detumbleSimulation.time,detumbleSimulation.quat(:,1)) % ex
-% hold on
-% plot(detumbleSimulation.time,detumbleSimulation.quat(:,2)) % ey
-% plot(detumbleSimulation.time,detumbleSimulation.quat(:,3)) % ez
-% plot(detumbleSimulation.time,detumbleSimulation.quat(:,4)) % eta
-% 
-% % Graph pretty 
-% ylim padded 
-% xlim tight 
-% xLab = xlabel('Time, s','Interpreter','latex'); 
-% yLab = ylabel('Quaternions','Interpreter','latex'); 
-% plotTitle = title('Quaternions as a function of time','interpreter','latex'); 
-% set(plotTitle,'FontSize',14,'FontWeight','bold') 
-% set(gca,'FontName','Palatino Linotype') 
-% set([xLab, yLab],'FontName','Palatino Linotype') 
-% set(gca,'FontSize', 9) 
-% set([xLab, yLab],'FontSize', 9) 
-% grid on 
-% legend('$\epsilon_x$','$\epsilon_y$','$\epsilon_z$','$\eta$', 'interpreter','latex','Location', 'EastOutside')
-% 
-% subplot(3,1,3)
-% plot(detumbleSimulation.time,detumbleSimulation.euler(:,1)) % phi
-% hold on
-% plot(detumbleSimulation.time,detumbleSimulation.euler(:,2)) % theta
-% plot(detumbleSimulation.time,detumbleSimulation.euler(:,3)) % psi
-% % Graph pretty 
-% ylim padded 
-% xlim tight 
-% xLab = xlabel('Time, s','Interpreter','latex'); 
-% yLab = ylabel('Euler angles, degrees','Interpreter','latex'); 
-% plotTitle = title('Euler angles as a function of time','interpreter','latex'); 
-% set(plotTitle,'FontSize',14,'FontWeight','bold') 
-% set(gca,'FontName','Palatino Linotype') 
-% set([xLab, yLab],'FontName','Palatino Linotype') 
-% set(gca,'FontSize', 9) 
-% set([xLab, yLab],'FontSize', 9) 
-% grid on 
-% legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'EastOutside')
 
 
 end % detumble deliverable 3
@@ -475,305 +185,84 @@ rv_initial = [r_ECI;v_ECI];
 normal.wb_AfterDetumble = [0.001; -0.001; 0.002]; % rad/s;
 normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI]; % 16x1 state vector
 
+% Adding more stuff from Mehiel's Code for ease. I am sure a lot of this is
+% redundant but we can clean up later after I get this stuff working. 
 
-% Define Surface Properties for Atmospheric Drag Torque
-surfaceproperties.cd = 2.5;
-surfaceproperties.a = 16;
-surfaceproperties.rho = 1.647454703531699e-14;
+h = 53335.2;
+ecc = 0; 
+Omega = 0;
+inclination = 98.43*pi/180; 
+omega = 0;
+nu = 0; 
 
-% SRP stuff
-srp.reflectivity = 1.4;             % unitless
-srp.surfacearea = 16;               % m
-srp.se = 1366;                      % W/m2
+% [r_ECI_0, v_ECI_0] = coe2rv(h, ecc, Omega, inclination, omega, nu);
+[r_ECI_0,v_ECI_0] = r_and_v_from_COEs(Omega,inclination,omega,h,ecc,nu);
 
-%{
-% RUN SIMULATION
-Td_Sim = sim('DisturbanceTorques.slx');
+z_LVLH = -r_ECI_0/norm(r_ECI_0);
+y_LVLH = -cross(r_ECI_0, v_ECI_0)/norm(cross(r_ECI_0, v_ECI_0));
+x_LVLH = cross(y_LVLH, z_LVLH);
 
-% Extract data from sim (torques) 
-atmos_torq.time = Td_Sim.aero_drag_data.time; 
-atmos_torq.data = squeeze(Td_Sim.aero_drag_data.signals.values); 
+% Euler angles from body to LVLH
+phi_0 = 0;
+theta_0 = 0;
+psi_0 = 0;
+E_b_LVLH_0 = [phi_0; theta_0; psi_0];
 
-srp_torq.time = Td_Sim.SRP_data.time; 
-srp_torq.data = Td_Sim.SRP_data.signals.values; 
+% Calculate Initial Kinematics
+C_LVLH_ECI_0 = [x_LVLH'; y_LVLH'; z_LVLH'];
+%C_b_LVLH_0 = Cx(phi_0)*Cy(theta_0)*Cz(psi_0);
+Cx = axang2rotm([1 0 0 phi_0]);
+Cy = axang2rotm([0 1 0 theta_0]);
+Cz = axang2rotm([0 0 1 psi_0]);
+C_b_LVLH_0 = Cx*Cy*Cz; 
 
-gg_torq.time = Td_Sim.gg_data.time; 
-gg_torq.data = squeeze(Td_Sim.gg_data.signals.values); 
+q_LVLH_ECI_0 = C2quat(C_LVLH_ECI_0);
+C_b_ECI_0 = C_b_LVLH_0*C_LVLH_ECI_0;
+q_b_LVLH_0 = [0; 0; 0; 1]; 
+%q_b_ECI_0 = C2quat(C_b_ECI_0);
+q_b_ECI_0 = quatMult(q_b_LVLH_0, q_LVLH_ECI_0);
+% Euler angles from body to ECI
+E_b_ECI_0 = C2EulerAngles(C_b_ECI_0); 
 
-mag_torq.time = Td_Sim.mag_data.time; 
-mag_torq.data = squeeze(Td_Sim.mag_data.signals.values); 
-
-
-% Start torque plots 
-for collapseplots = 1
-figure() 
-subplot(2,2,1)
-plot(atmos_torq.time, atmos_torq.data(1,:)); 
-hold on 
-plot(atmos_torq.time, atmos_torq.data(2,:)); 
-plot(atmos_torq.time, atmos_torq.data(3,:)); 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Atmospheric Drag Torque, [$\frac{N}{m}$]','Interpreter','latex');  
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('T_ax','T_ay','T_az', 'interpreter','latex','Location', 'northeast')
-
-subplot(2,2,2)
-plot(srp_torq.time, srp_torq.data(1,:)); 
-hold on 
-plot(srp_torq.time, srp_torq.data(2,:)); 
-plot(srp_torq.time, srp_torq.data(3,:)); 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Solar Radiation Pressure Torque, [$\frac{N}{m}$]','Interpreter','latex'); 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('T_sx','T_sy','T_sz', 'interpreter','latex','Location', 'northeast')
-
-subplot(2,2,3)
-plot(gg_torq.time, gg_torq.data(1,:)); 
-hold on 
-plot(gg_torq.time, gg_torq.data(2,:)); 
-plot(gg_torq.time, gg_torq.data(3,:)); 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Gravity Gradient Torque, [$\frac{N}{m}$]','Interpreter','latex'); 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('T_ggx','T_ggy','T_ggz', 'interpreter','latex','Location', 'northeast')
-
-subplot(2,2,4)
-plot(mag_torq.time, mag_torq.data(1,:)); 
-hold on 
-plot(mag_torq.time, mag_torq.data(2,:)); 
-plot(mag_torq.time, mag_torq.data(3,:)); 
-ylim padded 
-xlim tight 
-
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Magnetic Torque, [$\frac{N}{m}$]','Interpreter','latex'); 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('T_bx','T_by','T_bz', 'interpreter','latex','Location', 'northeast')
-
-sgtitle("Disturbance Torques")
-end % collapse for plots
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Extract data for omega, eulers, and quaternion FOR BODY-LVLH
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Td_Sim.time = Td_Sim.tout;
-Td_Sim.data = squeeze(Td_Sim.scopedata.signals.values);
-
-Td_Sim.w = Td_Sim.data(1:3,:);
-Td_Sim.w = Td_Sim.w';
-Td_Sim.euler = rad2deg(Td_Sim.data(4:6,:));
-Td_Sim.euler = Td_Sim.euler';
-Td_Sim.quat = Td_Sim.data(7:10,:); % epsx epsy epsz eta
-Td_Sim.quat = Td_Sim.quat';
+% Initial body rates of spacecraft
+w_LVLH_ECI_0 = C_b_ECI_0*cross(r_ECI_0, v_ECI_0)/norm(r_ECI_0)^2; 
+w_b_ECI_0 = [0.001; -0.001; 0.002];
+%w_b_LVLH_0 = w_b_ECI_0 - w_LVLH_ECI_0; % also dont think need rn
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% PLOTS FOR BODY-LVLH
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure()
-subplot(3,1,1)
-plot(Td_Sim.time,Td_Sim.w(:,1)) % wx
-hold on
-plot(Td_Sim.time,Td_Sim.w(:,2)) % wy
-plot(Td_Sim.time,Td_Sim.w(:,3)) % wz
+% actual part four starts 
+num_revs = 1;
+sun_ECI = [1; 0; 0];
+m_b = 0.5*[0; 0; -1];
+% First get rhos vectors with respect to the center of the spacecraft bus
+%bus
+Areas = 4*ones(6,1);
+normals = [1 0 0; -1 0 0; 0 1 0; 0 -1 0; 0 0 1; 0 0 -1];
+cps = [1 0 0; -1 0 0; 0 1 0; 0 -1 0; 0 0 1; 0 0 -1];
+% SP1
+Areas = [Areas; 6; 6];
+normals = [normals; [0 0 1]; [0 0 -1]];
+cps = [cps; 0 2.5 .025; 0 2.5 -.025];
+% SP2
+Areas = [Areas; 6; 6];
+normals = [normals; [0 0 1]; [0 0 -1]];
+cps = [cps; 0 -2.5 .025; 0 -2.5 -.025];
+% Sensor
+Areas = [Areas; .25; .25; .25; .25; .25*.25];
+normals = [normals; [1 0 0]; [-1 0 0]; [1 0 0]; [-1 0 0]; [0 0 1]];
+cps = [cps; .125 0 1.5; -.125 0 1.5; 0 .125 1.5; -.125 0 1.5; 0 0 2];
+% now subtract the center of mass to get the location of the rho vectors
+% with respect to the center of mass
+for i = 1:length(cps)
+    cps(i,:) = cps(i,:) - normal.cm;
+end
+% Now build the matrix
+surfaceProperties = [Areas cps normals];
+load aerowmm2020
 
-% Graph pretty 
-ylim padded 
-xlim tight 
+dyear_0 = decyear(2019, 3, 20, 12, 0, 0);
 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Angular Velocity, [$\frac{rad}{s}$]','Interpreter','latex'); 
-plotTitle = title('BODY-LVLH: Angular Velocity as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'EastOutside')
 
-% Turn off plot warnings
-w = warning('query','last');
-% Get the warning ID
-id = w.identifier;
-% Turn off the warning
-warning('off',id)
-
-subplot(3,1,2)
-plot(Td_Sim.time,Td_Sim.quat(:,1)) % ex
-hold on
-plot(Td_Sim.time,Td_Sim.quat(:,2)) % ey
-plot(Td_Sim.time,Td_Sim.quat(:,3)) % ez
-plot(Td_Sim.time,Td_Sim.quat(:,4)) % eta
-
-% Graph pretty 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Quaternions','Interpreter','latex'); 
-plotTitle = title('BODY-LVLH: Quaternions as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\epsilon_x$','$\epsilon_y$','$\epsilon_z$','$\eta$', 'interpreter','latex','Location', 'EastOutside')
-
-% Turn off plot warnings
-w = warning('query','last');
-% Get the warning ID
-id = w.identifier;
-% Turn off the warning
-warning('off',id)
-
-subplot(3,1,3)
-plot(Td_Sim.time,Td_Sim.euler(:,1)) % phi
-hold on
-plot(Td_Sim.time,Td_Sim.euler(:,2)) % theta
-plot(Td_Sim.time,Td_Sim.euler(:,3)) % psi
-% Graph pretty 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Euler angles, degrees','Interpreter','latex'); 
-plotTitle = title('BODY-LVLH: Euler angles as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'EastOutside')
-
-% Turn off plot warnings
-w = warning('query','last');
-% Get the warning ID
-id = w.identifier;
-% Turn off the warning
-warning('off',id)
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% PLOTS FOR BODY-ECI
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Extract data for omega, eulers, and quaternion FOR BODY-ECI
-
-% Td_Sim.time = Td_Sim.tout;
-Td_Sim.data = squeeze(Td_Sim.state_body_ECI.signals.values);
-
-Td_Sim.w = Td_Sim.data(1:3,:);
-Td_Sim.w = Td_Sim.w';
-Td_Sim.euler = rad2deg(Td_Sim.data(4:6,:));
-Td_Sim.euler = Td_Sim.euler';
-Td_Sim.quat = Td_Sim.data(7:10,:); % epsx epsy epsz eta
-Td_Sim.quat = Td_Sim.quat';
-
-figure()
-subplot(3,1,1)
-plot(Td_Sim.time,Td_Sim.w(:,1)) % wx
-hold on
-plot(Td_Sim.time,Td_Sim.w(:,2)) % wy
-plot(Td_Sim.time,Td_Sim.w(:,3)) % wz
-
-% Graph pretty 
-ylim padded 
-xlim tight 
-
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Angular Velocity, [$\frac{rad}{s}$]','Interpreter','latex'); 
-plotTitle = title('BODY-ECI: Angular Velocity as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'EastOutside')
-
-% Turn off plot warnings
-w = warning('query','last');
-% Get the warning ID
-id = w.identifier;
-% Turn off the warning
-warning('off',id)
-
-subplot(3,1,2)
-plot(Td_Sim.time,Td_Sim.quat(:,1)) % ex
-hold on
-plot(Td_Sim.time,Td_Sim.quat(:,2)) % ey
-plot(Td_Sim.time,Td_Sim.quat(:,3)) % ez
-plot(Td_Sim.time,Td_Sim.quat(:,4)) % eta
-
-% Graph pretty 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Quaternions','Interpreter','latex'); 
-plotTitle = title('BODY-ECI: Quaternions as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\epsilon_x$','$\epsilon_y$','$\epsilon_z$','$\eta$', 'interpreter','latex','Location', 'EastOutside')
-
-% Turn off plot warnings
-w = warning('query','last');
-% Get the warning ID
-id = w.identifier;
-% Turn off the warning
-warning('off',id)
-
-subplot(3,1,3)
-plot(Td_Sim.time,Td_Sim.euler(:,1)) % phi
-hold on
-plot(Td_Sim.time,Td_Sim.euler(:,2)) % theta
-plot(Td_Sim.time,Td_Sim.euler(:,3)) % psi
-% Graph pretty 
-ylim padded 
-xlim tight 
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Euler angles, degrees','Interpreter','latex'); 
-plotTitle = title('BODY-ECI: Euler angles as a function of time','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 9) 
-grid on 
-legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'EastOutside')
-
-% Turn off plot warnings
-w = warning('query','last');
-% Get the warning ID
-id = w.identifier;
-% Turn off the warning
-warning('off',id)
-%}
 
 
 
@@ -784,9 +273,7 @@ disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Deliverable #5: Reaction Wheel Control")
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-
-% for deliv = 5 % start collapse loop
-
+for deliv = 5 % start collapse loop
 
 % Find control gains for FSFC for a 3-axis reaction wheel control system.
 
@@ -828,22 +315,8 @@ I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
 % Run simulation
 %RW_Sim = sim('ReactionWheelControl.slx');
 
-%{
-DELIVERABLES: 
-1. Euler angles and quaternions in body/ECI
-2. Euler angles and quternions in body/LVLH
-3. Angular velocity of s/c in ECI expressed in Body
-4. Angular velocity of s/c in LVLH expressed in Body
-5. Commanded moment from the control law
-6. Wheel speed of each wheel
-%}
+end % deliv 5
 
-
-
-
-
-
-% end % deliv 5
 %% Functions used
 
 % Deliverable #1
@@ -1454,4 +927,130 @@ DELIVERABLES:
     end 
     end % end earth sphere plot code.
     
+% Deliverable #4
  
+    function [r_ECI_0, v_ECI_0] = coe2rv(h, ecc, Omega, inclination, omega, nu)
+    %compute r and v from COES
+    theta = omega; 
+    omega = Omega; 
+    inc = inclination; 
+    raan = nu;
+    mu = 1.327124e11; %km3/s2 for da sun !! this code is messed
+
+
+    theta = theta*pi/180;
+    omega = omega*pi/180;
+    raan = raan*pi/180;
+
+    
+    rvectx = (h^2/mu)*(1/(1+ecc*cos(theta))).*[cos(theta);sin(theta);0];
+    vvectx = (mu/h).*[-sin(theta);ecc+cos(theta);0];
+
+    %matrix conversion back into geocentric
+
+    term1 =[cos(omega) sin(omega) 0;-sin(omega) cos(omega) 0; 0 0 1];
+    term2 =[1 0 0; 0 cosd(inc) sind(inc); 0 -sind(inc) cosd(inc)];
+    term3 =[cos(raan) sin(raan) 0;-sin(raan) cos(raan) 0; 0 0 1];
+    convmat = term1*term2*term3;
+    
+    r_ECI_0 = convmat\rvectx;
+    v_ECI_0 = convmat\vvectx;
+    end
+
+% Deliverable 5 
+
+function quat_conj = quatConj(q) 
+% eta first 
+eta = q(1); 
+eps = q(2:end); 
+eps_vect = -eps; 
+quat_conj = [eta, eps_vect]; 
+end 
+
+
+function matrix2quat = C2quat(C)
+
+% Extract the elements of the DCM for C2quat -- will turn into a function.
+% i m just impatient ok 
+C11 = C(1, 1);
+C12 = C(1, 2);
+C13 = C(1, 3);
+C21 = C(2, 1);
+C22 = C(2, 2);
+C23 = C(2, 3);
+C31 = C(3, 1);
+C32 = C(3, 2);
+C33 = C(3, 3);
+
+% Calculate the quaternion elements; eta last !! 
+qw = sqrt(1 + C11 + C22 + C33) / 2;
+qx = (C32 - C23) / (4 * qw);
+qy = (C13 - C31) / (4 * qw);
+qz = (C21 - C12) / (4 * qw);
+
+matrix2quat = [qx; qy; qz; qw];
+
+end 
+
+
+function euler_angles = C2EulerAngles(C)
+    % Extract the elements of the direction cosine matrix
+    C11 = C(1, 1);
+    C12 = C(1, 2);
+    C13 = C(1, 3);
+    C21 = C(2, 1);
+    C22 = C(2, 2);
+    C23 = C(2, 3);
+    C31 = C(3, 1);
+    C32 = C(3, 2);
+    C33 = C(3, 3);
+
+    % Calculate the Euler angles
+    phi = atan2(C32, C33);
+    theta = -asin(C31);
+    psi = atan2(C21, C11);
+
+    euler_angles = [phi; theta; psi];
+end
+
+function [r_ECI,v_ECI] = r_and_v_from_COEs(RAAN,inc,w,h,Ecc,theta)
+% Finds the r and v vectors in an Earth Centered Inertial reference frame
+% Inputs
+    % inc = inclination [rad]
+    % w = argiment of perigee [rad]
+    % RAAN = right ascension of the ascending node [rad]
+    % h = angular momentum [km2/s]
+    % Ecc = eccentricity
+    % theta = true anomaly [rad]
+% Outputs
+    % r_vect = position vector in ECI frame [km]
+    % v_vect = velocity vector in ECI frame [km/s]
+
+% constant    
+muEarth = 398600;
+
+% determine perifocal to GEO rotation matrix
+Cz_RAAN =        [  cos(RAAN)     sin(RAAN)     0;
+                   -sin(RAAN)     cos(RAAN)     0;
+                    0             0             1]; % 3
+
+Cx_inc =         [  1             0             0;
+                    0             cos(inc)      sin(inc);
+                    0             -sin(inc)     cos(inc)]; % 1
+
+Cz_w =           [  cos(w)        sin(w)        0;
+                   -sin(w)        cos(w)        0;
+                    0             0             1]; % 3
+
+Qgeo2peri = Cz_w * Cx_inc * Cz_RAAN;
+Qperi2geo = Qgeo2peri';
+
+% find r and v (Perifocal)
+r_PF = (((h^2)/muEarth)*(1/(1+Ecc*cos(theta))))*[cos(theta);sin(theta);0];
+v_PF = (muEarth/h)*[-sin(theta); (Ecc+cos(theta)); 0];
+
+% calc r and v relative to the geocentric reference frame
+% GEO = ECI
+r_ECI = Qperi2geo*r_PF;
+v_ECI = Qperi2geo*v_PF;
+end

@@ -273,14 +273,11 @@ disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Deliverable #5: Reaction Wheel Control")
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-
-% for deliv = 5 % start collapse loop
-
+for deliv = 5 % start collapse loop
 
 % Find control gains for FSFC for a 3-axis reaction wheel control system.
 
 % Givens
-
 % damping ratio
 zeta = 0.65;
 % settling time, s
@@ -318,6 +315,7 @@ I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
 % Run simulation
 %RW_Sim = sim('ReactionWheelControl.slx');
 
+end % deliv 5
 
 %% Functions used
 
@@ -958,7 +956,6 @@ I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
     r_ECI_0 = convmat\rvectx;
     v_ECI_0 = convmat\vvectx;
     end
-
 
 % Deliverable 5 
 

@@ -150,13 +150,11 @@ euler_init = eulerinitial_from_LVLH_ECI_frames(Cb_LVLH,C_LVLH_ECI);
 Cb_ECI = Cb_LVLH*C_LVLH_ECI;
 [epsilon_b_ECI,eta_b_ECI] = quaternionParam(Cb_ECI);
 
-% Normal ops initial conditions
+% % Normal ops initial conditions
 normal.wb_given = [0.001; -0.001; 0.002]; % rad/s
 
 % For NORMAL OPS
-normal.state = [normal.wb_given; euler_init; epsilon_b_ECI; eta_b_ECI ];
-
-
+normal.state = [normal.wb_given; euler_init; eta_b_ECI; epsilon_b_ECI ];
 
 end % collapse for deliv. 2
 
@@ -230,7 +228,7 @@ w_b_ECI_0 = [0.001; -0.001; 0.002];
 
 
 % actual part four starts 
-num_revs = 1;
+num_revs = 5;
 sun_ECI = [1; 0; 0];
 m_b = 0.5*[0; 0; -1];
 % First get rhos vectors with respect to the center of the spacecraft bus
@@ -275,11 +273,9 @@ disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 % for deliv = 5 % start collapse loop
 
-
 % Find control gains for FSFC for a 3-axis reaction wheel control system.
 
 % Givens
-
 % damping ratio
 zeta = 0.65;
 % settling time, s
@@ -294,7 +290,6 @@ Is = 1.2;
 It = 0.6; 
 
 % Find control gains, k
-
 % Using above values, can find omega_n
 wn = (log(ts_required * sqrt(1 - zeta^2))) / (-zeta*ts);
 
@@ -313,6 +308,24 @@ qc = [0;0;0;1];
 Is_matrix = [Is 0 0; 0 Is 0; 0 0 Is];
 
 I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
+
+% 
+% Test_r = [7000;0;0];
+% Test_v = [7.5; 0; 0];
+% mu = 398600; % earth
+% 
+% tspan = [0 30000]; % seconds
+% options = odeset('RelTol', 1e-8, 'AbsTol',1e-8);
+% state = [r_ECI,v_ECI]; 
+% 
+% % call ode here
+% [time_test,state_test] = ode45(@non_impulsive_COAST,tspan,state,options,mu); 
+% 
+% figure()
+% plot(time_test,state_test(:,1:3)) % position
+
+
+
 
 % Run simulation
 %RW_Sim = sim('ReactionWheelControl.slx');

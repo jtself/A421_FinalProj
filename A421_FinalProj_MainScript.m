@@ -157,6 +157,8 @@ normal.wb_given = [0.001; -0.001; 0.002]; % rad/s
 % For NORMAL OPS
 normal.state = [normal.wb_given; euler_init; epsilon_b_ECI; eta_b_ECI ];
 
+% For output scope (used later)
+euler_b_LVLH = euler_body_LVLH(Cb_LVLH);
 
 
 end % collapse for deliv. 2
@@ -314,7 +316,11 @@ I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
 
 % Run simulation
 % At T = 100 minutes, s/c completes 14.4 orbits per 24 hour day. <-------
-tspan = T*14.4; % 24 hours worth of orbits
+
+num_of_revs = 5;
+
+tspan = T * num_of_revs; 
+
 out = sim('ReactionWheelControl.slx');
 
 % Extract Simulation Data
@@ -675,6 +681,20 @@ toc % for fun
     euler_init = (euler_b_LVLH + euler_LVLH_ECI);
     
     end % euler initial from... funct
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    function euler_b_LVLH = euler_body_LVLH(Cb_LVLH)
+    %{
+    description
+    %}
+    
+    M = Cb_LVLH; % easy name
+    euler_b_LVLH = [atan2(M(2,3),M(3,3)); -asin(M(1,3)); atan2(M(1,2),M(1,1))]; 
+    
+    end % euler initial from... funct
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     function [epsilon,eta] = quaternionParam(M)
     % Justin Self

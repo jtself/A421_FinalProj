@@ -150,11 +150,13 @@ euler_init = eulerinitial_from_LVLH_ECI_frames(Cb_LVLH,C_LVLH_ECI);
 Cb_ECI = Cb_LVLH*C_LVLH_ECI;
 [epsilon_b_ECI,eta_b_ECI] = quaternionParam(Cb_ECI);
 
-% % Normal ops initial conditions
+% Normal ops initial conditions
 normal.wb_given = [0.001; -0.001; 0.002]; % rad/s
 
 % For NORMAL OPS
-normal.state = [normal.wb_given; euler_init; eta_b_ECI; epsilon_b_ECI ];
+normal.state = [normal.wb_given; euler_init; epsilon_b_ECI; eta_b_ECI ];
+
+
 
 end % collapse for deliv. 2
 
@@ -186,49 +188,50 @@ normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI]; 
 % Adding more stuff from Mehiel's Code for ease. I am sure a lot of this is
 % redundant but we can clean up later after I get this stuff working. 
 
-% h = 53335.2;
-% ecc = 0; 
-% Omega = 0;
-% inclination = 98.43*pi/180; 
-% omega = 0;
-% nu = 0; 
+h = 53335.2;
+ecc = 0; 
+Omega = 0;
+inclination = 98.43*pi/180; 
+omega = 0;
+nu = 0; 
 
-%[r_ECI_0, v_ECI_0] = coe2rv(h, ecc, Omega, inclination, omega, nu);
+% [r_ECI_0, v_ECI_0] = coe2rv(h, ecc, Omega, inclination, omega, nu);
+[r_ECI_0,v_ECI_0] = r_and_v_from_COEs(Omega,inclination,omega,h,ecc,nu);
 
-%z_LVLH = -r_ECI_0/norm(r_ECI_0);
-%y_LVLH = -cross(r_ECI_0, v_ECI_0)/norm(cross(r_ECI_0, v_ECI_0));
-%x_LVLH = cross(y_LVLH, z_LVLH);
+z_LVLH = -r_ECI_0/norm(r_ECI_0);
+y_LVLH = -cross(r_ECI_0, v_ECI_0)/norm(cross(r_ECI_0, v_ECI_0));
+x_LVLH = cross(y_LVLH, z_LVLH);
 
 % Euler angles from body to LVLH
-% phi_0 = 0;
-% theta_0 = 0;
-% psi_0 = 0;
-% E_b_LVLH_0 = [phi_0; theta_0; psi_0];
+phi_0 = 0;
+theta_0 = 0;
+psi_0 = 0;
+E_b_LVLH_0 = [phi_0; theta_0; psi_0];
 
 % Calculate Initial Kinematics
-% C_LVLH_ECI_0 = [x_LVLH'; y_LVLH'; z_LVLH'];
-% %C_b_LVLH_0 = Cx(phi_0)*Cy(theta_0)*Cz(psi_0);
-% Cx = axang2rotm([1 0 0 phi_0]);
-% Cy = axang2rotm([0 1 0 theta_0]);
-% Cz = axang2rotm([0 0 1 psi_0]);
-% C_b_LVLH_0 = Cx*Cy*Cz; 
-% 
-% q_LVLH_ECI_0 = C2quat(C_LVLH_ECI_0);
-% C_b_ECI_0 = C_b_LVLH_0*C_LVLH_ECI_0;
-% q_b_LVLH_0 = [0; 0; 0; 1]; 
-% %q_b_ECI_0 = C2quat(C_b_ECI_0);
-% q_b_ECI_0 = quatMult(q_b_LVLH_0, q_LVLH_ECI_0);
-% % Euler angles from body to ECI
-% E_b_ECI_0 = C2EulerAngles(C_b_ECI_0); 
-% 
-% % Initial body rates of spacecraft
-% w_LVLH_ECI_0 = C_b_ECI_0*cross(r_ECI_0, v_ECI_0)/norm(r_ECI_0)^2; 
-% w_b_ECI_0 = [0.001; -0.001; 0.002];
+C_LVLH_ECI_0 = [x_LVLH'; y_LVLH'; z_LVLH'];
+%C_b_LVLH_0 = Cx(phi_0)*Cy(theta_0)*Cz(psi_0);
+Cx = axang2rotm([1 0 0 phi_0]);
+Cy = axang2rotm([0 1 0 theta_0]);
+Cz = axang2rotm([0 0 1 psi_0]);
+C_b_LVLH_0 = Cx*Cy*Cz; 
+
+q_LVLH_ECI_0 = C2quat(C_LVLH_ECI_0);
+C_b_ECI_0 = C_b_LVLH_0*C_LVLH_ECI_0;
+q_b_LVLH_0 = [0; 0; 0; 1]; 
+%q_b_ECI_0 = C2quat(C_b_ECI_0);
+q_b_ECI_0 = quatMult(q_b_LVLH_0, q_LVLH_ECI_0);
+% Euler angles from body to ECI
+E_b_ECI_0 = C2EulerAngles(C_b_ECI_0); 
+
+% Initial body rates of spacecraft
+w_LVLH_ECI_0 = C_b_ECI_0*cross(r_ECI_0, v_ECI_0)/norm(r_ECI_0)^2; 
+w_b_ECI_0 = [0.001; -0.001; 0.002];
 %w_b_LVLH_0 = w_b_ECI_0 - w_LVLH_ECI_0; % also dont think need rn
 
 
 % actual part four starts 
-num_revs = 5;
+num_revs = 1;
 sun_ECI = [1; 0; 0];
 m_b = 0.5*[0; 0; -1];
 % First get rhos vectors with respect to the center of the spacecraft bus
@@ -260,6 +263,9 @@ load aerowmm2020
 dyear_0 = decyear(2019, 3, 20, 12, 0, 0);
 
 
+
+
+
 end % deliverable 4; disturbance torques
 
 %% Deliverable 5: Reaction Wheel Control (Due Friday, June 2, 2023)
@@ -270,9 +276,11 @@ disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 % for deliv = 5 % start collapse loop
 
+
 % Find control gains for FSFC for a 3-axis reaction wheel control system.
 
 % Givens
+
 % damping ratio
 zeta = 0.65;
 % settling time, s
@@ -287,6 +295,7 @@ Is = 1.2;
 It = 0.6; 
 
 % Find control gains, k
+
 % Using above values, can find omega_n
 wn = (log(ts_required * sqrt(1 - zeta^2))) / (-zeta*ts);
 
@@ -305,24 +314,6 @@ qc = [0;0;0;1];
 Is_matrix = [Is 0 0; 0 Is 0; 0 0 Is];
 
 I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
-
-% 
-% Test_r = [7000;0;0];
-% Test_v = [7.5; 0; 0];
-% mu = 398600; % earth
-% 
-% tspan = [0 30000]; % seconds
-% options = odeset('RelTol', 1e-8, 'AbsTol',1e-8);
-% state = [r_ECI,v_ECI]; 
-% 
-% % call ode here
-% [time_test,state_test] = ode45(@non_impulsive_COAST,tspan,state,options,mu); 
-% 
-% figure()
-% plot(time_test,state_test(:,1:3)) % position
-
-
-
 
 % Run simulation
 %RW_Sim = sim('ReactionWheelControl.slx');
@@ -569,6 +560,57 @@ I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
     
     end % quat to rot mat function
     
+    function [dstate] = non_impulsive_COAST(time,state,mu)
+    %{ 
+    
+    *FOR COAST PHASE ONLY*
+    
+    **This function assumes that thrust is exactly parallel to initial velocity
+    direction.
+    
+    This function is for numerical integration (i.e., plug into ode45).
+    NOTE: only use this function for the BURN PHASE of the non-impulsive
+    maneuver. For the BURN phase, use "non_impulsive_BURN"
+    
+    INPUTS: 
+        INITIAL CONDITIONS
+        state vector(1:3) = position (rx,ry,rz)
+        state vector(4:6) = velocity (vx,vy,vz)
+    
+    OUTPUT: New state vector after integration.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    Justin Self, Cal Poly, Fall 2022; Introduction to Orbital Mechanics.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %}
+    
+    g0 = 9.807; % m/s2
+    g0 = g0/1000; % to correct the units; km/s2
+    
+    rx = state(1);
+    ry = state(2);
+    rz = state(3);
+    vx = state(4);
+    vy = state(5);
+    vz = state(6);
+    
+    r_vect = [rx ry rz];
+    r = norm(r_vect);
+    
+    v_vect = [vx vy vz];
+    v = norm(v_vect);
+    
+    xdot = vx;
+    ydot = vy;
+    zdot = vz;
+    xddot = (-mu*rx)/(r^3);
+    yddot = (-mu*ry)/(r^3);
+    zddot = (-mu*rz)/(r^3);
+    
+    
+    dstate = [xdot; ydot; zdot; xddot; yddot; zddot];
+    
+    
+    end % non impulsive coast funct
     
     function euler_init = eulerinitial_from_LVLH_ECI_frames(Cb_LVLH,C_LVLH_ECI)
     %{
@@ -895,7 +937,7 @@ I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
     omega = Omega; 
     inc = inclination; 
     raan = nu;
-    mu = 1.327124e11; %km3/s2
+    mu = 1.327124e11; %km3/s2 for da sun !! this code is messed
 
 
     theta = theta*pi/180;
@@ -920,4 +962,98 @@ I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
 
 % Deliverable 5 
 
+function quat_conj = quatConj(q) 
+% eta first 
+eta = q(1); 
+eps = q(2:end); 
+eps_vect = -eps; 
+quat_conj = [eta, eps_vect]; 
+end 
 
+
+function matrix2quat = C2quat(C)
+
+% Extract the elements of the DCM for C2quat -- will turn into a function.
+% i m just impatient ok 
+C11 = C(1, 1);
+C12 = C(1, 2);
+C13 = C(1, 3);
+C21 = C(2, 1);
+C22 = C(2, 2);
+C23 = C(2, 3);
+C31 = C(3, 1);
+C32 = C(3, 2);
+C33 = C(3, 3);
+
+% Calculate the quaternion elements; eta last !! 
+qw = sqrt(1 + C11 + C22 + C33) / 2;
+qx = (C32 - C23) / (4 * qw);
+qy = (C13 - C31) / (4 * qw);
+qz = (C21 - C12) / (4 * qw);
+
+matrix2quat = [qx; qy; qz; qw];
+
+end 
+
+
+function euler_angles = C2EulerAngles(C)
+    % Extract the elements of the direction cosine matrix
+    C11 = C(1, 1);
+    C12 = C(1, 2);
+    C13 = C(1, 3);
+    C21 = C(2, 1);
+    C22 = C(2, 2);
+    C23 = C(2, 3);
+    C31 = C(3, 1);
+    C32 = C(3, 2);
+    C33 = C(3, 3);
+
+    % Calculate the Euler angles
+    phi = atan2(C32, C33);
+    theta = -asin(C31);
+    psi = atan2(C21, C11);
+
+    euler_angles = [phi; theta; psi];
+end
+
+function [r_ECI,v_ECI] = r_and_v_from_COEs(RAAN,inc,w,h,Ecc,theta)
+% Finds the r and v vectors in an Earth Centered Inertial reference frame
+% Inputs
+    % inc = inclination [rad]
+    % w = argiment of perigee [rad]
+    % RAAN = right ascension of the ascending node [rad]
+    % h = angular momentum [km2/s]
+    % Ecc = eccentricity
+    % theta = true anomaly [rad]
+% Outputs
+    % r_vect = position vector in ECI frame [km]
+    % v_vect = velocity vector in ECI frame [km/s]
+
+% constant    
+muEarth = 398600;
+
+% determine perifocal to GEO rotation matrix
+Cz_RAAN =        [  cos(RAAN)     sin(RAAN)     0;
+                   -sin(RAAN)     cos(RAAN)     0;
+                    0             0             1]; % 3
+
+Cx_inc =         [  1             0             0;
+                    0             cos(inc)      sin(inc);
+                    0             -sin(inc)     cos(inc)]; % 1
+
+Cz_w =           [  cos(w)        sin(w)        0;
+                   -sin(w)        cos(w)        0;
+                    0             0             1]; % 3
+
+Qgeo2peri = Cz_w * Cx_inc * Cz_RAAN;
+Qperi2geo = Qgeo2peri';
+
+% find r and v (Perifocal)
+r_PF = (((h^2)/muEarth)*(1/(1+Ecc*cos(theta))))*[cos(theta);sin(theta);0];
+v_PF = (muEarth/h)*[-sin(theta); (Ecc+cos(theta)); 0];
+
+% calc r and v relative to the geocentric reference frame
+% GEO = ECI
+r_ECI = Qperi2geo*r_PF;
+v_ECI = Qperi2geo*v_PF;
+end

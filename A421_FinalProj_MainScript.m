@@ -11,6 +11,7 @@ Final Project Group #9
 %}
 clear all; close all; clc; 
 
+tic % for fun
 %% Introduction to the Main Script
 %{
 This script provides the framework for the AERO 421 Final Project.
@@ -20,8 +21,8 @@ The script is organized by section by deliverable in chronological order.
 2. Torque Free Motion       -- complete
 3. Detumble Simulation      -- complete
 4. Disturbance Simulation   -- complete
-5. Reaction Wheel Control   -- DUE JUNE 2
-6. Reaction Wheel Sizing    -- DUE JUNE 2
+5. Reaction Wheel Control   -- complete!
+6. Reaction Wheel Sizing    -- WORKING 6/6
 7. Visualization            -- not done
 8. Final Reflection         -- not done
 %}
@@ -167,7 +168,7 @@ detumble.state = [detumble.wb_given; euler_init; epsilon_b_ECI; eta_b_ECI; ];
 tspan = T * 5; % five orbits; seconds
 
 for deliv = 3 % detumble
-
+% Uh... why is this deleted???
 
 end % detumble deliverable 3
 
@@ -188,6 +189,7 @@ normal.state = [normal.wb_AfterDetumble; euler_init; epsilon_b_ECI; eta_b_ECI]; 
 % Adding more stuff from Mehiel's Code for ease. I am sure a lot of this is
 % redundant but we can clean up later after I get this stuff working. 
 
+%{
 h = 53335.2;
 ecc = 0; 
 Omega = 0;
@@ -195,7 +197,7 @@ inclination = 98.43*pi/180;
 omega = 0;
 nu = 0; 
 
-% [r_ECI_0, v_ECI_0] = coe2rv(h, ecc, Omega, inclination, omega, nu);
+[r_ECI_0, v_ECI_0] = coe2rv(h, ecc, Omega, inclination, omega, nu);
 [r_ECI_0,v_ECI_0] = r_and_v_from_COEs(Omega,inclination,omega,h,ecc,nu);
 
 z_LVLH = -r_ECI_0/norm(r_ECI_0);
@@ -229,6 +231,7 @@ w_LVLH_ECI_0 = C_b_ECI_0*cross(r_ECI_0, v_ECI_0)/norm(r_ECI_0)^2;
 w_b_ECI_0 = [0.001; -0.001; 0.002];
 %w_b_LVLH_0 = w_b_ECI_0 - w_LVLH_ECI_0; % also dont think need rn
 
+%}
 
 % actual part four starts 
 num_revs = 1;
@@ -261,9 +264,6 @@ surfaceProperties = [Areas cps normals];
 load aerowmm2020
 
 dyear_0 = decyear(2019, 3, 20, 12, 0, 0);
-
-
-
 
 
 end % deliverable 4; disturbance torques
@@ -313,9 +313,60 @@ Is_matrix = [Is 0 0; 0 Is 0; 0 0 Is];
 I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
 
 % Run simulation
-%RW_Sim = sim('ReactionWheelControl.slx');
+% At T = 100 minutes, s/c completes 14.4 orbits per 24 hour day. <-------
+tspan = T*14.4; % 24 hours worth of orbits
+out = sim('ReactionWheelControl.slx');
+
+% Extract Simulation Data
+RW.time = out.tout;
+RW.Mc = squeeze(out.MomentCommanded.signals.values);
+RW.Mcx = RW.Mc(1,:);
+RW.Mcy = RW.Mc(2,:);
+RW.Mcz = RW.Mc(3,:);
+
+% Plot results
+figure()
+plot(RW.time,RW.Mcx) % For full 24 hours
+hold on
+plot(RW.time,RW.Mcy)
+plot(RW.time,RW.Mcz)
+
+% Graph pretty 
+ylim padded
+xlim tight
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Commanded Moment [N-m]','Interpreter','latex'); 
+plotTitle = title('Commanded Moment vs Time Over the Full 24 Hour Period without Correction','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 14) 
+grid on 
+legend('$Mc_x$','$Mc_y$','$Mc_z$', 'interpreter','latex','Location', 'best')
+
+
+%% Determine Total Commanded Moment for 24 hours without corrections
+clc
+RW.TotalMcx = trapz(RW.Mcx);
+RW.TotalMcy = trapz(RW.Mcy);
+RW.TotalMcz = trapz(RW.Mcz);
+disp("Total Mcx is: " + RW.TotalMcx + " N-m")
+disp("Total Mcy is: " + RW.TotalMcy + " N-m")
+disp("Total Mcz is: " + RW.TotalMcz + " N-m")
+disp("These are the total cumulated moments needed for a reaction wheel system over 24 hours.")
+
 
 end % deliv 5
+
+toc % for fun
+
+
+
+
+
+
+
 
 %% Functions used
 
@@ -1054,3 +1105,4 @@ v_PF = (muEarth/h)*[-sin(theta); (Ecc+cos(theta)); 0];
 r_ECI = Qperi2geo*r_PF;
 v_ECI = Qperi2geo*v_PF;
 end
+

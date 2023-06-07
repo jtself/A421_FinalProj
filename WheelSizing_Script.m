@@ -512,24 +512,57 @@ out = sim('WheelSizing.slx');
 
 % Extract Simulation Data
 sizing.time = out.tout;
-sizing.aerodrag = squeeze(out.aero_drag_data.signals.values);
-sizing.gravgrad = squeeze(out.gg_data.signals.values);
-sizing.SRP = squeeze(out.SRP_data.signals.values);
-sizing.magfield = squeeze(out.mag_field.signals.values);
-
+sizing.aerodrag = squeeze(out.normalizedAero.signals.values);
+sizing.gravgrad = squeeze(out.normalizedGG.signals.values);
+sizing.SRP = squeeze(out.normalizedSRP.signals.values);
+sizing.magfield = squeeze(out.normalizedMagField.signals.values);
+sizing.Mc = squeeze(out.normalizedMc.signals.values);
 
 % ~~~~~~~~~~~~~~PER MEHIEL DUMP MOMENTUM ONCE PER ORBIT ~~~~~~~~~~~~~~
 
-%  Determine Total Commanded Moment for ONE ORBIT without corrections
-clc
-sizing.aeroNorm = trapz(vecnorm(sizing.aerodrag));
-sizing.ggNorm = trapz(vecnorm(sizing.gravgrad));
-sizing.srpNorm = trapz(vecnorm(sizing.SRP));
-sizing.magfieldNorm = trapz(vecnorm(sizing.magfield));
+%  Determine Total Angular Momentum stored in ONE ORBIT (turn off reaction
+%  wheels and measure Disturbance Torques only). 
 
-disp("Total Angular Momentum (norm of AeroDrag) is: " + sizing.aeroNorm + " N-m-s") 
+clc % clear command window.
+
+sizing.Td_aero = trapz(sizing.aerodrag);
+sizing.Td_gg = trapz(sizing.gravgrad);
+sizing.Td_srp = trapz(sizing.SRP);
+sizing.Td_magfield = trapz(sizing.magfield);
+
+Td_tot = sizing.Td_aero + sizing.Td_gg + sizing.Td_srp + sizing.Td_magfield;
+
+disp("Total Angular momentum as contribution of individual disturbance torques:")
+disp("AeroDrag: " + sizing.Td_aero + " N-m-s") 
+disp("Gravity Gradient: " + sizing.Td_gg + " N-m-s")
+disp("SRP: " + sizing.Td_srp + " N-m-s")
+disp("Magnetic Field: " + sizing.Td_magfield + " N-m-s")
+disp(" ")
+disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+disp("Total angular momentum applied by distrubance torques over one orbit is: " + (Td_tot) + " N-m-s")
+
+% Next, find MAXIMUM TORQUE. 
+% Take max value on Mc plot (with no reaction wheels to help). 
+
+MaxTorque = max(sizing.Mc); % max of normalized Commanded Moment vector
+disp(" ")
+disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+disp("Maximum Torque is: " + MaxTorque + " N-m")
+
+% Next, MASS
 
 
+
+
+% TO DO
+%Wheel Inertia
+%Max Wheel Speed
+
+
+
+
+
+disp(" ")
 toc % for fun
 end % deliv 6
 %% Functions used

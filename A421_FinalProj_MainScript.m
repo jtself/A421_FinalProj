@@ -12,7 +12,8 @@ Final Project Group #9
 clear all; close all; clc; 
 
 tic % for fun
-%% Introduction to the Main Script
+
+% Introduction to the Main Script
 %{
 This script provides the framework for the AERO 421 Final Project.
 Outside functions are called within this script.
@@ -28,6 +29,7 @@ The script is organized by section by deliverable in chronological order.
 %}
 
 %% Deliverable 1: April 14, 2023 | Mass Properties
+
 
 % disp("Deliverable #1: Mass Properties")
 % disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -88,11 +90,13 @@ L = 2; % length of bus
 % disp(J.normal)
 
 end % collapse deliv 1
-% %% Deliverable 2: April 21, 2023 | Torque-Free Motion
-% disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-% disp("Deliverable #2: Torque-Free Motion")
-% disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-% 
+%% Deliverable 2: April 21, 2023 | Torque-Free Motion
+disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+disp("Deliverable #2: Torque-Free Motion")
+disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+
+
 for deliverable = 2
 
 %{
@@ -164,6 +168,8 @@ euler_b_LVLH = euler_body_LVLH(Cb_LVLH);
 end % collapse for deliv. 2
 
 %% Deliverable 3: Date May 5: Detumble Simulation
+
+
 k = 0.2; % unitless gain chosen
 detumble.wb_given = [-0.05;0.03;0.2]; % rad/sec
 detumble.state = [detumble.wb_given; euler_init; epsilon_b_ECI; eta_b_ECI; ];
@@ -178,6 +184,8 @@ end % detumble deliverable 3
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Deliverable #4: Disturbance Torques")
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+
 
 for deliverable = 4
 
@@ -267,6 +275,169 @@ load aerowmm2020
 
 dyear_0 = decyear(2019, 3, 20, 12, 0, 0);
 
+% % RUN SIMULATION
+% Td_Sim = sim('DisturbanceTorques.slx');
+% 
+% % Extract data from sim  (torques) 
+% atmos_torq.time = Td_Sim.aero_drag_data.time; 
+% atmos_torq.data = squeeze(Td_Sim.aero_drag_data.signals.values); 
+% 
+% srp_torq.time = Td_Sim.SRP_data.time; 
+% srp_torq.data = Td_Sim.SRP_data.signals.values; 
+% 
+% gg_torq.time = Td_Sim.gg_data.time; 
+% gg_torq.data = squeeze(Td_Sim.gg_data.signals.values); 
+% 
+% mag_torq.time = Td_Sim.mag_data.time; 
+% mag_torq.data = squeeze(Td_Sim.mag_data.signals.values); 
+% 
+% % Start torque plots 
+% figure() 
+% subplot(2,2,1)
+% plot(atmos_torq.time, atmos_torq.data(1,:)); 
+% hold on 
+% plot(atmos_torq.time, atmos_torq.data(2,:)); 
+% plot(atmos_torq.time, atmos_torq.data(3,:)); 
+% ylim padded 
+% xlim tight 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Atmospheric Drag Torque, [$\frac{N}{m}$]','Interpreter','latex');  
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('T_ax','T_ay','T_az', 'interpreter','latex','Location', 'northeast')
+% 
+% subplot(2,2,2)
+% plot(srp_torq.time, srp_torq.data(1,:)); 
+% hold on 
+% plot(srp_torq.time, srp_torq.data(2,:)); 
+% plot(srp_torq.time, srp_torq.data(3,:)); 
+% ylim padded 
+% xlim tight 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Solar Radiation Pressure Torque, [$\frac{N}{m}$]','Interpreter','latex'); 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('T_sx','T_sy','T_sz', 'interpreter','latex','Location', 'northeast')
+% 
+% subplot(2,2,3)
+% plot(gg_torq.time, gg_torq.data(1,:)); 
+% hold on 
+% plot(gg_torq.time, gg_torq.data(2,:)); 
+% plot(gg_torq.time, gg_torq.data(3,:)); 
+% ylim padded 
+% xlim tight 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Gravity Gradient Torque, [$\frac{N}{m}$]','Interpreter','latex'); 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('T_ggx','T_ggy','T_ggz', 'interpreter','latex','Location', 'northeast')
+% 
+% subplot(2,2,4)
+% plot(mag_torq.time, mag_torq.data(1,:)); 
+% hold on 
+% plot(mag_torq.time, mag_torq.data(2,:)); 
+% plot(mag_torq.time, mag_torq.data(3,:)); 
+% ylim padded 
+% xlim tight 
+% 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Magnetic Torque, [$\frac{N}{m}$]','Interpreter','latex'); 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('T_bx','T_by','T_bz', 'interpreter','latex','Location', 'northeast')
+% 
+% sgtitle("Disturbance Torques")
+% 
+% 
+% 
+% % % Extract Simulink data for euler/ang/quat 
+% Td_Sim.time = Td_Sim.tout;
+% Td_Sim.data = squeeze(Td_Sim.scopedata.signals.values);
+% 
+% 
+% Td_Sim.w = Td_Sim.data(1:3,:);
+% Td_Sim.w = Td_Sim.w';
+% Td_Sim.euler = rad2deg(Td_Sim.data(4:6,:));
+% Td_Sim.euler = Td_Sim.euler';
+% Td_Sim.quat = Td_Sim.data(7:10,:); % epsx epsy epsz eta
+% Td_Sim.quat = Td_Sim.quat';
+% 
+% 
+% figure()
+% subplot(3,1,1)
+% plot(Td_Sim.time,Td_Sim.w(:,1)) % wx
+% hold on
+% plot(Td_Sim.time,Td_Sim.w(:,2)) % wy
+% plot(Td_Sim.time,Td_Sim.w(:,3)) % wz
+% 
+% % Graph pretty 
+% ylim padded 
+% xlim tight 
+% 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Angular Velocity, [$\frac{rad}{s}$]','Interpreter','latex'); 
+% plotTitle = title('Angular Velocity as a function of time','interpreter','latex'); 
+% set(plotTitle,'FontSize',14,'FontWeight','bold') 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'EastOutside')
+% 
+% 
+% subplot(3,1,2)
+% plot(Td_Sim.time,Td_Sim.quat(:,1)) % ex
+% hold on
+% plot(Td_Sim.time,Td_Sim.quat(:,2)) % ey
+% plot(Td_Sim.time,Td_Sim.quat(:,3)) % ez
+% plot(Td_Sim.time,Td_Sim.quat(:,4)) % eta
+% 
+% % Graph pretty 
+% ylim padded 
+% xlim tight 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Quaternions','Interpreter','latex'); 
+% plotTitle = title('Quaternions as a function of time','interpreter','latex'); 
+% set(plotTitle,'FontSize',14,'FontWeight','bold') 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('$\epsilon_x$','$\epsilon_y$','$\epsilon_z$','$\eta$', 'interpreter','latex','Location', 'EastOutside')
+% 
+% subplot(3,1,3)
+% plot(Td_Sim.time,Td_Sim.euler(:,1)) % phi
+% hold on
+% plot(Td_Sim.time,Td_Sim.euler(:,2)) % theta
+% plot(Td_Sim.time,Td_Sim.euler(:,3)) % psi
+% % Graph pretty 
+% ylim padded 
+% xlim tight 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Euler angles, degrees','Interpreter','latex'); 
+% plotTitle = title('Euler angles as a function of time','interpreter','latex'); 
+% set(plotTitle,'FontSize',14,'FontWeight','bold') 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'EastOutside')
+
 
 end % deliverable 4; disturbance torques
 
@@ -274,6 +445,8 @@ end % deliverable 4; disturbance torques
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Deliverable #5: Reaction Wheel Control")
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+
 
 for deliv = 5 % start collapse loop
 
@@ -326,23 +499,219 @@ out = sim('ReactionWheelControl.slx');
 % Extract Simulation Data
 RW.time = out.tout;
 RW.Mc = squeeze(out.MomentCommanded.signals.values);
+RW.Mc_time = squeeze(out.MomentCommanded.time);
 RW.Mcx = RW.Mc(1,:);
 RW.Mcy = RW.Mc(2,:);
 RW.Mcz = RW.Mc(3,:);
 
+
+RW.omegab_eci = squeeze(out.omega_b_ECI.signals.values); 
+RW.omegab_eci_time = squeeze(out.omega_b_ECI.time)'; 
+RW.eulb_eci = squeeze(out.eulers_quats_b_ECI.signals(1).values); %row
+RW.eulb_eci_time = squeeze(out.eulers_quats_b_ECI.time)'; 
+RW.quatb_eci = squeeze(out.eulers_quats_b_ECI.signals(2).values); %column
+RW.quatb_eci_time = squeeze(out.eulers_quats_b_ECI.time)'; 
+
+RW.omegab_lvlh = squeeze(out.omega_b_LVLH.signals.values); 
+RW.omegab_lvlh_time = squeeze(out.omega_b_LVLH.time)'; 
+RW.eulb_lvlh = squeeze(out.eulers_quats_b_LVLH.signals(1).values); 
+RW.eulb_lvlh_time = squeeze(out.eulers_quats_b_LVLH.time)'; 
+RW.quatb_lvlh = squeeze(out.eulers_quats_b_LVLH.signals(2).values); 
+RW.quatb_lvlh_time = squeeze(out.eulers_quats_b_LVLH.time)'; 
+RW.wheel_speeds = squeeze(out.wheelspeeds.signals.values); 
+RW.wheel_speeds_time = squeeze(out.wheelspeeds.time)'; 
+
+% Extract for each component of the data extracted; note that moment
+% commanded is already taken care of 
+
+RW.omegab_eci_x = RW.omegab_eci(1,:);
+RW.omegab_eci_y = RW.omegab_eci(2,:); 
+RW.omegab_eci_z = RW.omegab_eci(3,:); 
+
+RW.eulb_eci_x = RW.eulb_eci(1,:);  
+RW.eulb_eci_y = RW.eulb_eci(2,:);  
+RW.eulb_eci_z = RW.eulb_eci(3,:);  
+
+RW.quatb_eci_eta = RW.quatb_eci(1,:); 
+RW.quatb_eci_x = RW.quatb_eci(2,:); 
+RW.quatb_eci_y = RW.quatb_eci(3,:); 
+RW.quatb_eci_z = RW.quatb_eci(4,:); 
+
+RW.omegab_lvlh_x = RW.omegab_lvlh(1,:);
+RW.omegab_lvlh_y = RW.omegab_lvlh(2,:); 
+RW.omegab_lvlh_z = RW.omegab_lvlh(3,:); 
+
+RW.eulb_lvlh_x = RW.eulb_lvlh(1,:);  
+RW.eulb_lvlh_y = RW.eulb_lvlh(2,:);  
+RW.eulb_lvlh_z = RW.eulb_lvlh(3,:);  
+
+RW.quatb_lvlh_eta = RW.quatb_lvlh(1,:); 
+RW.quatb_lvlh_x = RW.quatb_lvlh(2,:); 
+RW.quatb_lvlh_y = RW.quatb_lvlh(3,:); 
+RW.quatb_lvlh_z = RW.quatb_lvlh(4,:); 
+
+RW.wheel_speeds_x = RW.wheel_speeds(1,:); 
+RW.wheel_speeds_y = RW.wheel_speeds(2,:); 
+RW.wheel_speeds_z = RW.wheel_speeds(3,:); 
+
+% ECI omega, euler and quaternion 
+figure() 
+subplot(3,1,1)
+plot(RW.omegab_eci_time, RW.omegab_eci_x)
+hold on 
+plot(RW.omegab_eci_time, RW.omegab_eci_y)
+plot(RW.omegab_eci_time, RW.omegab_eci_z)
+% Graph pretty 
+ylim padded 
+xlim([0, 40]) 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Angular Velocity','Interpreter','latex'); 
+plotTitle = title('Angular Velocity as a Function of Time (Zoomed)','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'best')
+
+subplot(3,1,2)
+plot(RW.eulb_eci_time, RW.eulb_eci_x)
+hold on 
+plot(RW.eulb_eci_time, RW.eulb_eci_y)
+plot(RW.eulb_eci_time, RW.eulb_eci_z)
+% Graph pretty 
+ylim padded 
+xlim tight 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Euler Angles','Interpreter','latex'); 
+plotTitle = title('Euler Angles as a Function of Time','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'best')
+
+subplot(3,1,3)
+plot(RW.quatb_eci_time, RW.quatb_eci_eta)
+hold on 
+plot(RW.quatb_eci_time, RW.quatb_eci_x)
+plot(RW.quatb_eci_time, RW.quatb_eci_y)
+plot(RW.quatb_eci_time, RW.quatb_eci_z)
+% Graph pretty 
+ylim padded 
+xlim tight 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Quaternions','Interpreter','latex'); 
+plotTitle = title('Quaternions as a Function of Time','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('$\eta$','$\epsilon_x$','$\epsilon_y$','$\epsilon_z$', 'interpreter','latex','Location', 'best')
+
+sgtitle('Relating Body to ECI Frame')
+% LVLH omega, euler and quaternion 
+figure() 
+subplot(3,1,1)
+plot(RW.omegab_lvlh_time, RW.omegab_lvlh_x)
+hold on 
+plot(RW.omegab_lvlh_time, RW.omegab_lvlh_y)
+plot(RW.omegab_lvlh_time, RW.omegab_lvlh_z)
+% Graph pretty 
+ylim padded 
+xlim([0, 40]) 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Angular Velocity','Interpreter','latex'); 
+plotTitle = title('Angular Velocity as a Function of Time (Zoomed)','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'best')
+
+subplot(3,1,2)
+plot(RW.eulb_lvlh_time, RW.eulb_lvlh_x)
+hold on 
+plot(RW.eulb_lvlh_time, RW.eulb_lvlh_y)
+plot(RW.eulb_lvlh_time, RW.eulb_lvlh_z)
+% Graph pretty 
+ylim padded 
+xlim([0, 40]) 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Euler Angles','Interpreter','latex'); 
+plotTitle = title('Euler Angles as a Function of Time (Zoomed)','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'best')
+
+subplot(3,1,3)
+plot(RW.quatb_lvlh_time, RW.quatb_lvlh_eta)
+hold on 
+plot(RW.quatb_lvlh_time, RW.quatb_lvlh_x)
+plot(RW.quatb_lvlh_time, RW.quatb_lvlh_y)
+plot(RW.quatb_lvlh_time, RW.quatb_lvlh_z)
+% Graph pretty 
+ylim padded 
+xlim([0, 40])  
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Quaternions','Interpreter','latex'); 
+plotTitle = title('Quaternions as a Function of Time (Zoomed)','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('$\eta$','$\epsilon_x$','$\epsilon_y$','$\epsilon_z$', 'interpreter','latex','Location', 'best')
+sgtitle('Relating Body to LVLH Frame')
+
+% Lets plot the commanded moment and wheel speeds 
+figure()
+plot(RW.wheel_speeds_time, RW.wheel_speeds_x)
+hold on 
+plot(RW.wheel_speeds_time, RW.wheel_speeds_y)
+plot(RW.wheel_speeds_time, RW.wheel_speeds_z)
+% Graph pretty 
+ylim padded 
+xlim tight 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Wheel Speed','Interpreter','latex'); 
+%plotTitle = title('Wheel Speed vs Time','interpreter','latex'); 
+%set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('Wheel 1','Wheel 2','Wheel 3', 'interpreter','latex')
+sgtitle('Wheel Speed for each Reaction Wheel')
+
+
+
 % Plot results
 figure()
+subplot(2,1,1)
 plot(RW.time,RW.Mcx) % For full 24 hours
 hold on
 plot(RW.time,RW.Mcy)
 plot(RW.time,RW.Mcz)
-
 % Graph pretty 
 ylim padded
 xlim tight
 xLab = xlabel('Time, s','Interpreter','latex'); 
 yLab = ylabel('Commanded Moment [N-m]','Interpreter','latex'); 
-plotTitle = title('Commanded Moment vs Time Over the Full 24 Hour Period without Correction','interpreter','latex'); 
+plotTitle = title('Commanded Moment vs Time Over the Full 24 Hour Period with Correction','interpreter','latex'); 
 set(plotTitle,'FontSize',14,'FontWeight','bold') 
 set(gca,'FontName','Palatino Linotype') 
 set([xLab, yLab],'FontName','Palatino Linotype') 
@@ -351,16 +720,36 @@ set([xLab, yLab],'FontSize', 14)
 grid on 
 legend('$Mc_x$','$Mc_y$','$Mc_z$', 'interpreter','latex','Location', 'best')
 
+subplot(2,1,2)
+plot(RW.time,RW.Mcx) % For full 24 hours
+hold on
+plot(RW.time,RW.Mcy)
+plot(RW.time,RW.Mcz)
+% Graph pretty 
+ylim padded
+xlim([0, 40]) 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Commanded Moment [N-m]','Interpreter','latex'); 
+plotTitle = title('Commanded Moment vs Time (Zoomed)','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 14) 
+grid on 
+legend('$Mc_x$','$Mc_y$','$Mc_z$', 'interpreter','latex','Location', 'best')
+sgtitle('Commanded Moment from Control Law')
 
-%% Determine Total Commanded Moment for 24 hours without corrections
-clc
-RW.TotalMcx = trapz(RW.Mcx);
-RW.TotalMcy = trapz(RW.Mcy);
-RW.TotalMcz = trapz(RW.Mcz);
-disp("Total Mcx is: " + RW.TotalMcx + " N-m")
-disp("Total Mcy is: " + RW.TotalMcy + " N-m")
-disp("Total Mcz is: " + RW.TotalMcz + " N-m")
-disp("These are the total cumulated moments needed for a reaction wheel system over 24 hours.")
+
+% %  Determine Total Commanded Moment for 24 hours without corrections
+% clc
+% RW.TotalMcx = trapz(RW.Mcx);
+% RW.TotalMcy = trapz(RW.Mcy);
+% RW.TotalMcz = trapz(RW.Mcz);
+% disp("Total Mcx is: " + RW.TotalMcx + " N-m")
+% disp("Total Mcy is: " + RW.TotalMcy + " N-m")
+% disp("Total Mcz is: " + RW.TotalMcz + " N-m")
+% disp("These are the total cumulated moments needed for a reaction wheel system over 24 hours.")
 
 
 end % deliv 5
@@ -375,6 +764,8 @@ toc % for fun
 
 
 %% Functions used
+
+
 
 % Deliverable #1
 

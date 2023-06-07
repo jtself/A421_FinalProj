@@ -91,10 +91,11 @@ L = 2; % length of bus
 
 end % collapse deliv 1
 %% Deliverable 2: April 21, 2023 | Torque-Free Motion
+%{
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Deliverable #2: Torque-Free Motion")
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-
+%}
 
 
 for deliverable = 2
@@ -181,11 +182,12 @@ for deliv = 3 % detumble
 end % detumble deliverable 3
 
 %% Deliverable 4: May 19, 2023 | Disturbance Torques 
+
+%{
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Deliverable #4: Disturbance Torques")
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-
-
+%}
 
 for deliverable = 4
 
@@ -504,7 +506,6 @@ RW.Mcx = RW.Mc(1,:);
 RW.Mcy = RW.Mc(2,:);
 RW.Mcz = RW.Mc(3,:);
 
-
 RW.omegab_eci = squeeze(out.omega_b_ECI.signals.values); 
 RW.omegab_eci_time = squeeze(out.omega_b_ECI.time)'; 
 RW.eulb_eci = squeeze(out.eulers_quats_b_ECI.signals(1).values); %row
@@ -518,8 +519,8 @@ RW.eulb_lvlh = squeeze(out.eulers_quats_b_LVLH.signals(1).values);
 RW.eulb_lvlh_time = squeeze(out.eulers_quats_b_LVLH.time)'; 
 RW.quatb_lvlh = squeeze(out.eulers_quats_b_LVLH.signals(2).values); 
 RW.quatb_lvlh_time = squeeze(out.eulers_quats_b_LVLH.time)'; 
-RW.wheel_speeds = squeeze(out.wheelspeeds.signals.values); 
-RW.wheel_speeds_time = squeeze(out.wheelspeeds.time)'; 
+RW.wheel_speeds = squeeze(out.WheelSpeeds.signals.values); 
+RW.wheel_speeds_time = squeeze(out.WheelSpeeds.time)'; 
 
 % Extract for each component of the data extracted; note that moment
 % commanded is already taken care of 
@@ -698,7 +699,6 @@ legend('Wheel 1','Wheel 2','Wheel 3', 'interpreter','latex')
 sgtitle('Wheel Speed for each Reaction Wheel')
 
 
-
 % Plot results
 figure()
 subplot(2,1,1)
@@ -711,7 +711,7 @@ ylim padded
 xlim tight
 xLab = xlabel('Time, s','Interpreter','latex'); 
 yLab = ylabel('Commanded Moment [N-m]','Interpreter','latex'); 
-plotTitle = title('Commanded Moment vs Time Over the Full 24 Hour Period with Correction','interpreter','latex'); 
+plotTitle = title('Commanded Moment vs Time','interpreter','latex'); 
 set(plotTitle,'FontSize',14,'FontWeight','bold') 
 set(gca,'FontName','Palatino Linotype') 
 set([xLab, yLab],'FontName','Palatino Linotype') 
@@ -721,7 +721,7 @@ grid on
 legend('$Mc_x$','$Mc_y$','$Mc_z$', 'interpreter','latex','Location', 'best')
 
 subplot(2,1,2)
-plot(RW.time,RW.Mcx) % For full 24 hours
+plot(RW.time,RW.Mcx)
 hold on
 plot(RW.time,RW.Mcy)
 plot(RW.time,RW.Mcz)
@@ -755,12 +755,6 @@ sgtitle('Commanded Moment from Control Law')
 end % deliv 5
 
 toc % for fun
-
-
-
-
-
-
 
 
 %% Functions used
@@ -989,8 +983,8 @@ toc % for fun
     x = cross(y,z);
     
     C_LVLH_ECI = [x'; y'; z']; % From ECI to LVLH
-    disp("Transformation matrix from ECI to LVLH is: ")
-    disp(C_LVLH_ECI)
+    %disp("Transformation matrix from ECI to LVLH is: ")
+    %disp(C_LVLH_ECI)
     
     end % perifocal to LVLH function
     

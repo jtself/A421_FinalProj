@@ -174,7 +174,7 @@ end % collapse for deliv. 2
 k = 0.2; % unitless gain chosen
 detumble.wb_given = [-0.05;0.03;0.2]; % rad/sec
 detumble.state = [detumble.wb_given; euler_init; epsilon_b_ECI; eta_b_ECI; ];
-tspan = T * 5; % five orbits; seconds
+tspan = T; % five orbits; seconds
 
 for deliv = 3 % detumble
 % Uh... why is this deleted???

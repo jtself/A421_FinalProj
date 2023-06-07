@@ -12,7 +12,8 @@ Final Project Group #9
 clear all; close all; clc; 
 
 tic % for fun
-%% Introduction to the Main Script
+
+% Introduction to the Main Script
 %{
 This script provides the framework for the AERO 421 Final Project.
 Outside functions are called within this script.
@@ -28,6 +29,7 @@ The script is organized by section by deliverable in chronological order.
 %}
 
 %% Deliverable 1: April 14, 2023 | Mass Properties
+
 
 % disp("Deliverable #1: Mass Properties")
 % disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -88,11 +90,14 @@ L = 2; % length of bus
 % disp(J.normal)
 
 end % collapse deliv 1
-% %% Deliverable 2: April 21, 2023 | Torque-Free Motion
-% disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-% disp("Deliverable #2: Torque-Free Motion")
-% disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-% 
+%% Deliverable 2: April 21, 2023 | Torque-Free Motion
+%{
+disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+disp("Deliverable #2: Torque-Free Motion")
+disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+%}
+
+
 for deliverable = 2
 
 %{
@@ -164,6 +169,8 @@ euler_b_LVLH = euler_body_LVLH(Cb_LVLH);
 end % collapse for deliv. 2
 
 %% Deliverable 3: Date May 5: Detumble Simulation
+
+
 k = 0.2; % unitless gain chosen
 detumble.wb_given = [-0.05;0.03;0.2]; % rad/sec
 detumble.state = [detumble.wb_given; euler_init; epsilon_b_ECI; eta_b_ECI; ];
@@ -175,9 +182,12 @@ for deliv = 3 % detumble
 end % detumble deliverable 3
 
 %% Deliverable 4: May 19, 2023 | Disturbance Torques 
+
+%{
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Deliverable #4: Disturbance Torques")
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+%}
 
 for deliverable = 4
 
@@ -267,14 +277,178 @@ load aerowmm2020
 
 dyear_0 = decyear(2019, 3, 20, 12, 0, 0);
 
+% % RUN SIMULATION
+% Td_Sim = sim('DisturbanceTorques.slx');
+% 
+% % Extract data from sim  (torques) 
+% atmos_torq.time = Td_Sim.aero_drag_data.time; 
+% atmos_torq.data = squeeze(Td_Sim.aero_drag_data.signals.values); 
+% 
+% srp_torq.time = Td_Sim.SRP_data.time; 
+% srp_torq.data = Td_Sim.SRP_data.signals.values; 
+% 
+% gg_torq.time = Td_Sim.gg_data.time; 
+% gg_torq.data = squeeze(Td_Sim.gg_data.signals.values); 
+% 
+% mag_torq.time = Td_Sim.mag_data.time; 
+% mag_torq.data = squeeze(Td_Sim.mag_data.signals.values); 
+% 
+% % Start torque plots 
+% figure() 
+% subplot(2,2,1)
+% plot(atmos_torq.time, atmos_torq.data(1,:)); 
+% hold on 
+% plot(atmos_torq.time, atmos_torq.data(2,:)); 
+% plot(atmos_torq.time, atmos_torq.data(3,:)); 
+% ylim padded 
+% xlim tight 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Atmospheric Drag Torque, [$\frac{N}{m}$]','Interpreter','latex');  
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('T_ax','T_ay','T_az', 'interpreter','latex','Location', 'northeast')
+% 
+% subplot(2,2,2)
+% plot(srp_torq.time, srp_torq.data(1,:)); 
+% hold on 
+% plot(srp_torq.time, srp_torq.data(2,:)); 
+% plot(srp_torq.time, srp_torq.data(3,:)); 
+% ylim padded 
+% xlim tight 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Solar Radiation Pressure Torque, [$\frac{N}{m}$]','Interpreter','latex'); 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('T_sx','T_sy','T_sz', 'interpreter','latex','Location', 'northeast')
+% 
+% subplot(2,2,3)
+% plot(gg_torq.time, gg_torq.data(1,:)); 
+% hold on 
+% plot(gg_torq.time, gg_torq.data(2,:)); 
+% plot(gg_torq.time, gg_torq.data(3,:)); 
+% ylim padded 
+% xlim tight 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Gravity Gradient Torque, [$\frac{N}{m}$]','Interpreter','latex'); 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('T_ggx','T_ggy','T_ggz', 'interpreter','latex','Location', 'northeast')
+% 
+% subplot(2,2,4)
+% plot(mag_torq.time, mag_torq.data(1,:)); 
+% hold on 
+% plot(mag_torq.time, mag_torq.data(2,:)); 
+% plot(mag_torq.time, mag_torq.data(3,:)); 
+% ylim padded 
+% xlim tight 
+% 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Magnetic Torque, [$\frac{N}{m}$]','Interpreter','latex'); 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('T_bx','T_by','T_bz', 'interpreter','latex','Location', 'northeast')
+% 
+% sgtitle("Disturbance Torques")
+% 
+% 
+% 
+% % % Extract Simulink data for euler/ang/quat 
+% Td_Sim.time = Td_Sim.tout;
+% Td_Sim.data = squeeze(Td_Sim.scopedata.signals.values);
+% 
+% 
+% Td_Sim.w = Td_Sim.data(1:3,:);
+% Td_Sim.w = Td_Sim.w';
+% Td_Sim.euler = rad2deg(Td_Sim.data(4:6,:));
+% Td_Sim.euler = Td_Sim.euler';
+% Td_Sim.quat = Td_Sim.data(7:10,:); % epsx epsy epsz eta
+% Td_Sim.quat = Td_Sim.quat';
+% 
+% 
+% figure()
+% subplot(3,1,1)
+% plot(Td_Sim.time,Td_Sim.w(:,1)) % wx
+% hold on
+% plot(Td_Sim.time,Td_Sim.w(:,2)) % wy
+% plot(Td_Sim.time,Td_Sim.w(:,3)) % wz
+% 
+% % Graph pretty 
+% ylim padded 
+% xlim tight 
+% 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Angular Velocity, [$\frac{rad}{s}$]','Interpreter','latex'); 
+% plotTitle = title('Angular Velocity as a function of time','interpreter','latex'); 
+% set(plotTitle,'FontSize',14,'FontWeight','bold') 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('$\omega_x$','$\omega_y$','$\omega_z$', 'interpreter','latex','Location', 'EastOutside')
+% 
+% 
+% subplot(3,1,2)
+% plot(Td_Sim.time,Td_Sim.quat(:,1)) % ex
+% hold on
+% plot(Td_Sim.time,Td_Sim.quat(:,2)) % ey
+% plot(Td_Sim.time,Td_Sim.quat(:,3)) % ez
+% plot(Td_Sim.time,Td_Sim.quat(:,4)) % eta
+% 
+% % Graph pretty 
+% ylim padded 
+% xlim tight 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Quaternions','Interpreter','latex'); 
+% plotTitle = title('Quaternions as a function of time','interpreter','latex'); 
+% set(plotTitle,'FontSize',14,'FontWeight','bold') 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('$\epsilon_x$','$\epsilon_y$','$\epsilon_z$','$\eta$', 'interpreter','latex','Location', 'EastOutside')
+% 
+% subplot(3,1,3)
+% plot(Td_Sim.time,Td_Sim.euler(:,1)) % phi
+% hold on
+% plot(Td_Sim.time,Td_Sim.euler(:,2)) % theta
+% plot(Td_Sim.time,Td_Sim.euler(:,3)) % psi
+% % Graph pretty 
+% ylim padded 
+% xlim tight 
+% xLab = xlabel('Time, s','Interpreter','latex'); 
+% yLab = ylabel('Euler angles, degrees','Interpreter','latex'); 
+% plotTitle = title('Euler angles as a function of time','interpreter','latex'); 
+% set(plotTitle,'FontSize',14,'FontWeight','bold') 
+% set(gca,'FontName','Palatino Linotype') 
+% set([xLab, yLab],'FontName','Palatino Linotype') 
+% set(gca,'FontSize', 9) 
+% set([xLab, yLab],'FontSize', 9) 
+% grid on 
+% legend('$\phi$','$\theta$','$\psi$', 'interpreter','latex','Location', 'EastOutside')
+
 
 end % deliverable 4; disturbance torques
 
 %% Deliverable 5: Reaction Wheel Control (Due Friday, June 2, 2023)
+%{
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Deliverable #5: Reaction Wheel Control")
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-
+%}
 for deliv = 5 % start collapse loop
 
 % Find control gains for FSFC for a 3-axis reaction wheel control system.
@@ -314,66 +488,50 @@ Is_matrix = [Is 0 0; 0 Is 0; 0 0 Is];
 
 I_ReactionWheels = J.normal + (2 * It + Is + 2 * mw) * eye(3);
 
-% Run simulation
-% At T = 100 minutes, s/c completes 14.4 orbits per 24 hour day. <-------
+end % deliv 5
+%% Wheel Sizing
 
-num_of_revs = 5;
+for deliv = 6
 
+%{
+Goal: Dump momentum ONCE PER ORBIT. 
+Determine reaction wheel specs:
+Angular Momentum Storage
+Maximum Torque
+Mass
+Wheel Inertia
+Max Wheel Speed
+%}
+
+% setup
+num_of_revs = 1; % one orbit
 tspan = T * num_of_revs; 
 
-out = sim('ReactionWheelControl.slx');
+% Run sim
+out = sim('WheelSizing.slx');
 
 % Extract Simulation Data
-RW.time = out.tout;
-RW.Mc = squeeze(out.MomentCommanded.signals.values);
-RW.Mcx = RW.Mc(1,:);
-RW.Mcy = RW.Mc(2,:);
-RW.Mcz = RW.Mc(3,:);
-
-% Plot results
-figure()
-plot(RW.time,RW.Mcx) % For full 24 hours
-hold on
-plot(RW.time,RW.Mcy)
-plot(RW.time,RW.Mcz)
-
-% Graph pretty 
-ylim padded
-xlim tight
-xLab = xlabel('Time, s','Interpreter','latex'); 
-yLab = ylabel('Commanded Moment [N-m]','Interpreter','latex'); 
-plotTitle = title('Commanded Moment vs Time Over the Full 24 Hour Period without Correction','interpreter','latex'); 
-set(plotTitle,'FontSize',14,'FontWeight','bold') 
-set(gca,'FontName','Palatino Linotype') 
-set([xLab, yLab],'FontName','Palatino Linotype') 
-set(gca,'FontSize', 9) 
-set([xLab, yLab],'FontSize', 14) 
-grid on 
-legend('$Mc_x$','$Mc_y$','$Mc_z$', 'interpreter','latex','Location', 'best')
+sizing.time = out.tout;
+sizing.aerodrag = squeeze(out.aero_drag_data.signals.values);
+sizing.gravgrad = squeeze(out.gg_data.signals.values);
+sizing.SRP = squeeze(out.SRP_data.signals.values);
+sizing.magfield = squeeze(out.mag_field.signals.values);
 
 
-%% Determine Total Commanded Moment for 24 hours without corrections
+% ~~~~~~~~~~~~~~PER MEHIEL DUMP MOMENTUM ONCE PER ORBIT ~~~~~~~~~~~~~~
+
+%  Determine Total Commanded Moment for ONE ORBIT without corrections
 clc
-RW.TotalMcx = trapz(RW.Mcx);
-RW.TotalMcy = trapz(RW.Mcy);
-RW.TotalMcz = trapz(RW.Mcz);
-disp("Total Mcx is: " + RW.TotalMcx + " N-m")
-disp("Total Mcy is: " + RW.TotalMcy + " N-m")
-disp("Total Mcz is: " + RW.TotalMcz + " N-m")
-disp("These are the total cumulated moments needed for a reaction wheel system over 24 hours.")
+sizing.aeroNorm = trapz(vecnorm(sizing.aerodrag));
+sizing.ggNorm = trapz(vecnorm(sizing.gravgrad));
+sizing.srpNorm = trapz(vecnorm(sizing.SRP));
+sizing.magfieldNorm = trapz(vecnorm(sizing.magfield));
 
+disp("Total Angular Momentum (norm of AeroDrag) is: " + sizing.aeroNorm + " N-m-s") 
 
-end % deliv 5
 
 toc % for fun
-
-
-
-
-
-
-
-
+end % deliv 6
 %% Functions used
 
 % Deliverable #1
@@ -598,8 +756,8 @@ toc % for fun
     x = cross(y,z);
     
     C_LVLH_ECI = [x'; y'; z']; % From ECI to LVLH
-    disp("Transformation matrix from ECI to LVLH is: ")
-    disp(C_LVLH_ECI)
+    %disp("Transformation matrix from ECI to LVLH is: ")
+    %disp(C_LVLH_ECI)
     
     end % perifocal to LVLH function
     

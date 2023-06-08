@@ -548,18 +548,78 @@ MaxTorque = max(sizing.Mc); % max of normalized Commanded Moment vector
 disp(" ")
 disp("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 disp("Maximum Torque is: " + MaxTorque + " N-m")
+% Note that maxTorque is also maxAcceleration of the wheel. 
 
 % Next, MASS
+%{ 
+Since maxTorque = maxAccel_wheel, F = ma; 
+Assume the mammoth OCE Technology RW1000.
+    Specs:  max angular momentum = 15 Nms
+            max torque = 1 Nm
+            max speed = 1500 rpm
+            mass = 11.5 kg
+            lifetime == 8 years+
+%}
+
+% Wheel Inertia
+wheelradius = 0.5 * (337/1000); % in m
+mw = 11.5; % kg MASS per wheel
+Iws = (1/4) * mw * wheelradius^2; % spin inertia
+Iwt = (1/2) * mw * wheelradius^2; % transverse inertia
+
+I_wheel = [Iws 0 0 ; 0 Iws 0; 0 0 Iwt];
+disp("Using the OCE Technology RW1000 reaction wheel (mass = 11.5kg each), we have:")
+disp("Wheel inertia (in kg*m2): ")
+disp(I_wheel)
+
+% Max Wheel Speed (run sim here)
+Is_matrix = [Iws 0 0; 0 Iws 0; 0 0 Iws];
+
+out_wheel = sim('WheelSizing.slx');
+
+% sizing.time already known
+sizing.wheelspeedsnew = squeeze(out_wheel.WheelSpeeds.signals.values);
+sizing.wsx = sizing.wheelspeedsnew(1,:);
+sizing.wsy = sizing.wheelspeedsnew(2,:);
+sizing.wsz = sizing.wheelspeedsnew(3,:);
+
+% Lets plot the commanded moment and wheel speeds 
+figure()
+plot(sizing.time, sizing.wsx)
+hold on 
+plot(sizing.time, sizing.wsy)
+plot(sizing.time, sizing.wsz)
+
+% Graph pretty 
+ylim padded 
+xlim tight 
+xLab = xlabel('Time, s','Interpreter','latex'); 
+yLab = ylabel('Wheel Speed, rad/sec','Interpreter','latex'); 
+plotTitle = title('Wheel Speed vs Time','interpreter','latex'); 
+set(plotTitle,'FontSize',14,'FontWeight','bold') 
+set(gca,'FontName','Palatino Linotype') 
+set([xLab, yLab],'FontName','Palatino Linotype') 
+set(gca,'FontSize', 9) 
+set([xLab, yLab],'FontSize', 9) 
+grid on 
+legend('Wheel 1','Wheel 2','Wheel 3', 'interpreter','latex')
+%sgtitle('Wheel Speed for each Reaction Wheel')
 
 
+% Print Wheel Speeds
+maxspeed.x = max(sizing.wsx);
+maxspeed.y = max(sizing.wsy);
+maxspeed.z = max(sizing.wsz);
 
+A = [maxspeed.x, maxspeed.y, maxspeed.z];
+maxwheelspeed = max(A,[],"all");
 
-% TO DO
-%Wheel Inertia
-%Max Wheel Speed
+maxwheelspeed = maxwheelspeed * 180/pi;
 
-
-
+% assume output is in rad/s
+% convert to RPM
+disp("Max wheel speed is: " +  maxwheelspeed + " RPM")
+disp("Manufacturer stated max wheel speed is 1500 RPM; this is OK.")
 
 
 disp(" ")
